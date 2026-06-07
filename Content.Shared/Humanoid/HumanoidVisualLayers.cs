@@ -61,6 +61,7 @@ namespace Content.Shared.Humanoid
         StencilMask,
         Ensnare,
         Fire,
-
+        SnoutCover,
+        TailExtras,
     }
 }

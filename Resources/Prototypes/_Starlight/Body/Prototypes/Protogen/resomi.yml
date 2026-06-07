@@ -1,0 +1,56 @@
+- type: body
+  id: ProtoResomi
+  name: proto-resomi # Starlight, quotation marks removed
+  root: chest
+  slots:
+    head:
+      part: HeadResomi
+      connections:
+      - chest
+      organs:
+        brain: OrganProtogenBrain
+        eyes: OrganProtogenEyes
+        tongue: OrganProtogenTongueForked
+    chest:
+      part: ChestResomi
+      connections:
+      - right arm
+      - left arm
+      - head
+      - groin
+      organs:
+        heart: OrganProtogenHeart
+        lungs: OrganProtogenLungs
+    groin:
+      part: GroinResomi
+      connections:
+      - right leg
+      - left leg
+      organs:
+        stomach: OrganProtogenStomach
+        liver: OrganProtogenLiver
+        kidneys: OrganProtogenKidneys
+    right arm:
+      part: RightArmResomi
+      connections:
+      - right hand
+    left arm:
+      part: LeftArmResomi
+      connections:
+      - left hand
+    right hand:
+      part: RightHandResomi
+    left hand:
+      part: LeftHandResomi
+    right leg:
+      part: RightLegResomi
+      connections:
+      - right foot
+    left leg:
+      part: LeftLegResomi
+      connections:
+      - left foot
+    right foot:
+      part: RightFootResomi
+    left foot:
+      part: LeftFootResomi

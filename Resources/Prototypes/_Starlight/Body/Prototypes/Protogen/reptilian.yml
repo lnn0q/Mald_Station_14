@@ -1,0 +1,56 @@
+- type: body
+  name: proto-reptile # Starlight, quotation marks removed
+  id: ProtoReptilian # Starlight, ProtoReptile -> ProtoReptilian
+  root: chest
+  slots:
+    head:
+      part: HeadReptilian
+      connections:
+      - chest
+      organs:
+        brain: OrganProtogenBrain
+        eyes: OrganProtogenEyes
+        tongue: OrganProtogenTongue
+    chest:
+      part: ChestReptilian
+      connections:
+      - right arm
+      - left arm
+      - head
+      - groin
+      organs:
+        heart: OrganProtogenHeart
+        lungs: OrganProtogenLungs
+    groin:
+      part: GroinReptilian
+      connections:
+      - right leg
+      - left leg
+      organs:
+        stomach: OrganProtogenStomach
+        liver: OrganProtogenLiver
+        kidneys: OrganProtogenKidneys
+    right arm:
+      part: RightArmReptilian
+      connections:
+      - right hand
+    left arm:
+      part: LeftArmReptilian
+      connections:
+      - left hand
+    right hand:
+      part: RightHandReptilian
+    left hand:
+      part: LeftHandReptilian
+    right leg:
+      part: RightLegReptilian
+      connections:
+      - right foot
+    left leg:
+      part: LeftLegReptilian
+      connections:
+      - left foot
+    right foot:
+      part: RightFootReptilian
+    left foot:
+      part: LeftFootReptilian

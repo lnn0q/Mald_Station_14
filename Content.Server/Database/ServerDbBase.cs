@@ -389,6 +389,10 @@ namespace Content.Server.Database
                 loadouts[role.RoleName] = loadout;
             }
 
+            RoleLoadout? speciesLoadout = null;
+            if (loadouts.Remove(HumanoidCharacterProfile.SpeciesLoadoutDatabaseKey, out var storedSpeciesLoadout))
+                speciesLoadout = storedSpeciesLoadout;
+
             var barkVoice = profile.BarkVoice ?? SharedHumanoidAppearanceSystem.DefaultBarkVoice; // Goob Station - Barks
 
             return new HumanoidCharacterProfile(
@@ -416,6 +420,7 @@ namespace Content.Server.Database
                 antags.ToHashSet(),
                 traits.ToHashSet(),
                 loadouts,
+                speciesLoadout,
                 barkVoice // Goob Station - Barks
             );
         }
@@ -473,7 +478,11 @@ namespace Content.Server.Database
 
             profile.Loadouts.Clear();
 
-            foreach (var (role, loadouts) in humanoid.Loadouts)
+            var persistedLoadouts = new Dictionary<string, RoleLoadout>(humanoid.Loadouts);
+            if (humanoid.SpeciesLoadout != null)
+                persistedLoadouts[HumanoidCharacterProfile.SpeciesLoadoutDatabaseKey] = humanoid.SpeciesLoadout;
+
+            foreach (var (role, loadouts) in persistedLoadouts)
             {
                 var dz = new ProfileRoleLoadout()
                 {

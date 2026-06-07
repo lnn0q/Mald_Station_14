@@ -60,6 +60,11 @@ namespace Content.Shared.Humanoid
                     yield return HumanoidVisualLayers.Hair;
                     yield return HumanoidVisualLayers.FacialHair;
                     yield return HumanoidVisualLayers.Snout;
+                    yield return HumanoidVisualLayers.SnoutCover;
+                    break;
+                case HumanoidVisualLayers.Snout:
+                    yield return HumanoidVisualLayers.Snout;
+                    yield return HumanoidVisualLayers.SnoutCover;
                     break;
                 case HumanoidVisualLayers.LArm:
                     yield return HumanoidVisualLayers.LArm;
@@ -81,12 +86,14 @@ namespace Content.Shared.Humanoid
                     yield return HumanoidVisualLayers.Chest;
                     yield return HumanoidVisualLayers.Wings; // for IPC wings port from SimpleStation
                     yield return HumanoidVisualLayers.Tail;
+                    yield return HumanoidVisualLayers.TailExtras;
                 // Shitmed Change Start
                     yield return HumanoidVisualLayers.Groin;
                     break;
                 case HumanoidVisualLayers.Groin:
                     yield return HumanoidVisualLayers.Groin;
                     yield return HumanoidVisualLayers.Tail;
+                    yield return HumanoidVisualLayers.TailExtras;
                     break;
                 case HumanoidVisualLayers.LHand:
                     yield return HumanoidVisualLayers.LHand;

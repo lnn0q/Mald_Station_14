@@ -31,6 +31,20 @@
     - Holy
 
 - type: damageContainer
+  id: Hybrid
+  supportedGroups:
+    - Brute
+    - Burn
+    - Toxin
+    - Airloss
+    - Genetic
+    - Electronic
+  supportedTypes:
+    - Holy
+    - Heat
+    - Shock
+
+- type: damageContainer
   id: Inorganic
   supportedGroups:
     - Brute

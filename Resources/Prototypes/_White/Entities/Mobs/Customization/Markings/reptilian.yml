@@ -8,7 +8,7 @@
   id: LizardHeadGuilmon
   bodyPart: Eyes
   markingCategory: Head
-  speciesRestriction: [Reptilian]
+  speciesRestriction: [Reptilian, ProtoReptilian]
   sprites:
   - sprite: _White/Mobs/Customization/snouts.rsi
     state: guilmon
@@ -17,7 +17,7 @@
   id: LizardHeadCobraHood
   bodyPart: HeadSide
   markingCategory: HeadSide
-  speciesRestriction: [Reptilian]
+  speciesRestriction: [Reptilian, ProtoReptilian]
   sprites:
   - sprite: _White/Mobs/Customization/reptilian_parts.rsi
     state: cobra_hood_with_ears
@@ -29,7 +29,7 @@
   id: LizardShoutEasternDragon
   bodyPart: Snout
   markingCategory: Snout
-  speciesRestriction: [Reptilian]
+  speciesRestriction: [Reptilian, ProtoReptilian]
   sprites:
   - sprite: _White/Mobs/Customization/snouts.rsi
     state: eastern_dragon
@@ -40,7 +40,7 @@
   id: LizardShoutEasternDragonUsiki
   bodyPart: Snout
   markingCategory: Snout
-  speciesRestriction: [Reptilian]
+  speciesRestriction: [Reptilian, ProtoReptilian]
   sprites:
   - sprite: _White/Mobs/Customization/snouts.rsi
     state: eastern_dragon
@@ -54,7 +54,7 @@
   id: SnakeLargeTail
   bodyPart: Tail
   markingCategory: Tail
-  speciesRestriction: [Reptilian]
+  speciesRestriction: [Reptilian, ProtoReptilian]
   sprites:
     - sprite: _White/Mobs/Customization/reptilian_64x32.rsi
       state: snake_large
@@ -77,7 +77,7 @@
   id: LizardChestSpinesAquatic
   bodyPart: Chest
   markingCategory: Chest
-  speciesRestriction: [Reptilian]
+  speciesRestriction: [Reptilian, ProtoReptilian]
   sprites:
   - sprite: _White/Mobs/Customization/reptilian.rsi
     state: spines_aquatic
@@ -86,7 +86,7 @@
   id: LizardChestSpinesAquaticWithoutTail
   bodyPart: Chest
   markingCategory: Chest
-  speciesRestriction: [Reptilian]
+  speciesRestriction: [Reptilian, ProtoReptilian]
   sprites:
   - sprite: _White/Mobs/Customization/reptilian.rsi
     state: spines_aquatic_alt
@@ -95,7 +95,7 @@
   id: LizardChestSpinesLong
   bodyPart: Chest
   markingCategory: Chest
-  speciesRestriction: [Reptilian]
+  speciesRestriction: [Reptilian, ProtoReptilian]
   sprites:
   - sprite: _White/Mobs/Customization/reptilian.rsi
     state: spines_long
@@ -104,7 +104,7 @@
   id: LizardChestSpinesLongWithoutTail
   bodyPart: Chest
   markingCategory: Chest
-  speciesRestriction: [Reptilian]
+  speciesRestriction: [Reptilian, ProtoReptilian]
   sprites:
   - sprite: _White/Mobs/Customization/reptilian.rsi
     state: spines_long_alt
@@ -113,7 +113,7 @@
   id: LizardChestSpinesLongMembrane
   bodyPart: Chest
   markingCategory: Chest
-  speciesRestriction: [Reptilian]
+  speciesRestriction: [Reptilian, ProtoReptilian]
   sprites:
   - sprite: _White/Mobs/Customization/reptilian.rsi
     state: spines_longmembrane
@@ -122,7 +122,7 @@
   id: LizardChestSpinesLongMembraneWithoutTail
   bodyPart: Chest
   markingCategory: Chest
-  speciesRestriction: [Reptilian]
+  speciesRestriction: [Reptilian, ProtoReptilian]
   sprites:
   - sprite: _White/Mobs/Customization/reptilian.rsi
     state: spines_longmembrane_alt
@@ -131,7 +131,7 @@
   id: LizardChestSpinesShort
   bodyPart: Chest
   markingCategory: Chest
-  speciesRestriction: [Reptilian]
+  speciesRestriction: [Reptilian, ProtoReptilian]
   sprites:
   - sprite: _White/Mobs/Customization/reptilian.rsi
     state: spines_short
@@ -140,7 +140,7 @@
   id: LizardChestSpinesShortWithoutTail
   bodyPart: Chest
   markingCategory: Chest
-  speciesRestriction: [Reptilian]
+  speciesRestriction: [Reptilian, ProtoReptilian]
   sprites:
   - sprite: _White/Mobs/Customization/reptilian.rsi
     state: spines_short_alt
@@ -149,7 +149,7 @@
   id: LizardChestSpinesShortMembrane
   bodyPart: Chest
   markingCategory: Chest
-  speciesRestriction: [Reptilian]
+  speciesRestriction: [Reptilian, ProtoReptilian]
   sprites:
   - sprite: _White/Mobs/Customization/reptilian.rsi
     state: spines_shortmembrane
@@ -158,7 +158,7 @@
   id: LizardChestSpinesShortMembraneWithoutTail
   bodyPart: Chest
   markingCategory: Chest
-  speciesRestriction: [Reptilian]
+  speciesRestriction: [Reptilian, ProtoReptilian]
   sprites:
   - sprite: _White/Mobs/Customization/reptilian.rsi
     state: spines_shortmembrane_alt

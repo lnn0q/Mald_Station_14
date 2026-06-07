@@ -244,6 +244,14 @@ public sealed class StationSpawningSystem : SharedStationSpawningSystem
             EquipRoleLoadout(entity.Value, loadout, roleProto!);
         }
 
+        if (profile?.SpeciesLoadout != null &&
+            species.Loadout != null &&
+            profile.SpeciesLoadout.Role == species.Loadout.Value &&
+            _prototypeManager.TryIndex(species.Loadout.Value, out RoleLoadoutPrototype? speciesLoadoutProto))
+        {
+            EquipRoleLoadout(entity.Value, profile.SpeciesLoadout, speciesLoadoutProto);
+        }
+
         if (prototype?.StartingGear != null)
         {
             var startingGear = _prototypeManager.Index<StartingGearPrototype>(prototype.StartingGear);

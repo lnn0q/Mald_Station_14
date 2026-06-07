@@ -1,0 +1,53 @@
+- type: body
+  id: ProtoDiona # Starlight, name changed
+  name: proto-diona # Starlight, quotation marks removed, name changed
+  root: chest
+  slots:
+    head:
+      part: HeadDiona
+      connections:
+      - chest
+      organs:
+        brain: OrganDionaBrainNymph
+        eyes: OrganProtogenEyes
+        tongue: OrganProtogenTongue
+    chest:
+      part: ChestDiona
+      connections:
+      - right arm
+      - left arm
+      - head
+      - groin
+      organs:
+        lungs: OrganDionaLungsNymph
+    groin:
+      part: GroinDiona
+      connections:
+      - right leg
+      - left leg
+      organs:
+        stomach: OrganDionaStomachNymph
+    right arm:
+      part: RightArmDiona
+      connections:
+      - right hand
+    left arm:
+      part: LeftArmDiona
+      connections:
+      - left hand
+    right hand:
+      part: RightHandDiona
+    left hand:
+      part: LeftHandDiona
+    right leg:
+      part: RightLegDiona
+      connections:
+      - right foot
+    left leg:
+      part: LeftLegDiona
+      connections:
+      - left foot
+    right foot:
+      part: RightFootDiona
+    left foot:
+      part: LeftFootDiona

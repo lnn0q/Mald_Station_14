@@ -45,7 +45,9 @@ namespace Content.Shared.Humanoid.Markings
         Underwear,
         Undershirt,
         Tail,
-        Overlay
+        Overlay,
+        SnoutCover,
+        TailExtras
     }
 
     public static class MarkingCategoriesConversion
@@ -62,6 +64,7 @@ namespace Content.Shared.Humanoid.Markings
                 HumanoidVisualLayers.HeadTop => MarkingCategories.HeadTop,
                 HumanoidVisualLayers.HeadSide => MarkingCategories.HeadSide,
                 HumanoidVisualLayers.Snout => MarkingCategories.Snout,
+                HumanoidVisualLayers.SnoutCover => MarkingCategories.SnoutCover,
                 HumanoidVisualLayers.Undershirt => MarkingCategories.Undershirt,
                 HumanoidVisualLayers.Underwear => MarkingCategories.Underwear,
                 HumanoidVisualLayers.Chest => MarkingCategories.Chest,
@@ -76,6 +79,7 @@ namespace Content.Shared.Humanoid.Markings
                 HumanoidVisualLayers.RFoot => MarkingCategories.RightFoot,
                 HumanoidVisualLayers.Wings => MarkingCategories.Wings,
                 HumanoidVisualLayers.Tail => MarkingCategories.Tail,
+                HumanoidVisualLayers.TailExtras => MarkingCategories.TailExtras,
                 _ => MarkingCategories.Overlay
             };
         }
