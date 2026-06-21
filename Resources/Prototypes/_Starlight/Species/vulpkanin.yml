@@ -48,7 +48,7 @@
     Special:
       points: 4
       required: true
-      defaultMarkings: [ ProtoVulpMediumArmor, ProtoVulpVisor, ProtoVulpLights, ProtoVulpLEDFace ]
+      defaultMarkings: [ ProtoVulpVisor, ProtoVulpLights, ProtoVulpLEDFace ]
     Hair:
       points: 1
       required: false
@@ -81,6 +81,7 @@
     Undershirt:
       points: 1
       required: false
+      defaultMarkings: [ ProtoVulpMediumArmor ]
     Underwear:
       points: 1
       required: false

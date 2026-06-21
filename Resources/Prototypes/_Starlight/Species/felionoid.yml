@@ -54,7 +54,7 @@
     Special:
       points: 4
       required: true
-      defaultMarkings: [ ProtoFelionoidMediumArmor, ProtoFelionoidVisor, ProtoFelionoidLights, ProtoFelionoidLEDFace ]
+      defaultMarkings: [ ProtoFelionoidVisor, ProtoFelionoidLights, ProtoFelionoidLEDFace ]
     Hair:
       points: 1
       required: false
@@ -86,6 +86,7 @@
     Undershirt:
       points: 1
       required: false
+      defaultMarkings: [ ProtoFelionoidMediumArmor ]
     Underwear:
       points: 1
       required: false

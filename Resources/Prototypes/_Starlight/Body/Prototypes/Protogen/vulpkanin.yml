@@ -1,26 +1,32 @@
 - type: body
   id: ProtoVulp
   name: proto-vulp # Starlight, quotation marks removed
-  root: torso
+  root: chest
   slots:
     head:
       part: HeadProtoVulp
       connections:
-      - torso
+      - chest
       organs:
         brain: OrganProtogenBrain
         eyes: OrganProtogenEyes
         tongue: OrganProtogenTongue
-    torso:
+    chest:
       part: TorsoProtoVulp
       connections:
       - right arm
       - left arm
-      - right leg
-      - left leg
+      - head
+      - groin
       organs:
         heart: OrganProtogenHeart
         lungs: OrganProtogenLungs
+    groin:
+      part: GroinProtoVulp
+      connections:
+      - right leg
+      - left leg
+      organs:
         stomach: OrganProtogenStomach # Dear god.. they can eat CHOCOLATE.
         liver: OrganProtogenLiver
         kidneys: OrganProtogenKidneys

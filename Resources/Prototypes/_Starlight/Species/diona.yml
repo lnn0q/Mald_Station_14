@@ -54,7 +54,7 @@
     Special:
       points: 4
       required: true
-      defaultMarkings: [ ProtoDionaMediumArmor, ProtoDionaVisor, ProtoDionaLights, ProtoDionaLEDFace ]
+      defaultMarkings: [ ProtoDionaVisor, ProtoDionaLights, ProtoDionaLEDFace ]
     Hair:
       points: 1
       required: false
@@ -82,6 +82,7 @@
     Undershirt:
       points: 1
       required: false
+      defaultMarkings: [ ProtoDionaMediumArmor ]
     Underwear:
       points: 1
       required: false

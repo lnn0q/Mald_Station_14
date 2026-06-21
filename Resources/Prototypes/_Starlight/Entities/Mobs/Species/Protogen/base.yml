@@ -149,12 +149,18 @@
   - type: Inventory
     speciesId: protogen #to be replaced with proto[species] when new sprites are made
     templateId: protogen
+    displacements:
+      jumpsuit:
+        sizeMaps:
+          32:
+            sprite: _FarHorizons/Mobs/Species/Proto-Vulp/displacement.rsi
+            state: jumpsuit
     femaleDisplacements:
       jumpsuit:
         sizeMaps:
           32:
-            sprite: _FarHorizons/Mobs/Species/Protogen/displacement.rsi
-            state: jumpsuit-female
+            sprite: _FarHorizons/Mobs/Species/Proto-Vulp/displacement.rsi
+            state: jumpsuit
   - type: Barotrauma
     damage:
       types:
@@ -183,9 +189,15 @@
   - type: Inventory
     speciesId: protogen #to be replaced with proto[species] when new sprites are made
     templateId: protogen
+    displacements:
+      jumpsuit:
+        sizeMaps:
+          32:
+            sprite: _FarHorizons/Mobs/Species/Proto-Vulp/displacement.rsi
+            state: jumpsuit
     femaleDisplacements:
       jumpsuit:
         sizeMaps:
           32:
-            sprite: _FarHorizons/Mobs/Species/Protogen/displacement.rsi
-            state: jumpsuit-female
+            sprite: _FarHorizons/Mobs/Species/Proto-Vulp/displacement.rsi
+            state: jumpsuit

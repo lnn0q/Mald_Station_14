@@ -47,7 +47,7 @@
     Special:
       points: 4
       required: true
-      defaultMarkings: [ ProtoMothMediumArmor, ProtoMothVisor, ProtoMothLights, ProtoMothLEDFace ]
+      defaultMarkings: [ ProtoMothVisor, ProtoMothLights, ProtoMothLEDFace ]
     Hair:
       points: 1
       required: false
@@ -80,6 +80,7 @@
     Undershirt:
       points: 1
       required: false
+      defaultMarkings: [ ProtoMothMediumArmor ]
     Underwear:
       points: 1
       required: false

@@ -1,26 +1,32 @@
 - type: body
   id: Protogen
   name: protogen # Starlight, quotation marks removed
-  root: torso
+  root: chest
   slots:
     head:
       part: HeadProtogen
       connections:
-      - torso
+      - chest
       organs:
         brain: OrganProtogenBrain
         eyes: OrganProtogenEyes
         tongue: OrganProtogenTongue
-    torso:
+    chest:
       part: TorsoProtogen
       connections:
       - right arm
       - left arm
-      - right leg
-      - left leg
+      - head
+      - groin
       organs:
         heart: OrganProtogenHeart
         lungs: OrganProtogenLungs
+    groin:
+      part: GroinProtogen
+      connections:
+      - right leg
+      - left leg
+      organs:
         stomach: OrganProtogenStomach
         liver: OrganProtogenLiver
         kidneys: OrganProtogenKidneys

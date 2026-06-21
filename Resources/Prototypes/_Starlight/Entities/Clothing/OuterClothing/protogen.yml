@@ -9,6 +9,8 @@
     sprite: Clothing/OuterClothing/Armor/security.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Armor/security.rsi # Just a placeholder, since it's overwritten below.
+    clothingVisuals:
+      outerClothing2: []
     equipSound: /Audio/Mecha/mechmove03.ogg
     unequipSound: /Audio/Mecha/mechmove03.ogg
   - type: Item
@@ -31,9 +33,6 @@
     state: light
   - type: Clothing
     sprite: _FarHorizons/Clothing/OuterClothing/Armor/protogen.rsi
-    clothingVisuals:
-      outerClothing2:
-      - state: light
   - type: Armor
     modifiers:
       coefficients:
@@ -53,9 +52,6 @@
     state: light
   - type: Clothing
     sprite: _FarHorizons/Clothing/OuterClothing/Armor/protogen.rsi
-    clothingVisuals:
-      outerClothing2:
-      - state: light
   - type: Armor # Starlight start, no armor
     modifiers:
       coefficients:
@@ -92,9 +88,6 @@
     state: medium
   - type: Clothing
     sprite: _FarHorizons/Clothing/OuterClothing/Armor/protogen.rsi
-    clothingVisuals:
-      outerClothing2:
-      - state: medium
   - type: Armor
     modifiers:
       coefficients:
@@ -115,9 +108,6 @@
     state: medium
   - type: Clothing
     sprite: _FarHorizons/Clothing/OuterClothing/Armor/protogen.rsi
-    clothingVisuals:
-      outerClothing2:
-      - state: medium
   - type: Armor
     modifiers:
       coefficients:
@@ -163,9 +153,6 @@
     state: heavy
   - type: Clothing
     sprite: _FarHorizons/Clothing/OuterClothing/Armor/protogen.rsi
-    clothingVisuals:
-      outerClothing2:
-      - state: heavy
   - type: Armor
     modifiers:
       coefficients:
@@ -189,9 +176,6 @@
     state: heavy
   - type: Clothing
     sprite: _FarHorizons/Clothing/OuterClothing/Armor/protogen.rsi
-    clothingVisuals:
-      outerClothing2:
-      - state: heavy
   - type: PressureProtection
     highPressureMultiplier: 0.6
     lowPressureMultiplier: 1000

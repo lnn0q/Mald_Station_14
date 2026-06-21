@@ -255,9 +255,9 @@ public sealed partial class MarkingSet
     {
         IoCManager.Resolve(ref markingManager);
 
-        var toRemove = new List<int>();
         foreach (var (category, list) in Markings)
         {
+            var toRemove = new List<int>();
             for (var i = 0; i < list.Count; i++)
             {
                 if (!markingManager.TryGetMarking(list[i], out var marking))
@@ -272,9 +272,9 @@ public sealed partial class MarkingSet
                 }
             }
 
-            foreach (var i in toRemove)
+            for (var i = toRemove.Count - 1; i >= 0; i--)
             {
-                Remove(category, i);
+                Remove(category, toRemove[i]);
             }
         }
     }
@@ -297,8 +297,12 @@ public sealed partial class MarkingSet
                 continue;
             }
 
-            var index = Markings.TryGetValue(category, out var markings) ? markings.Count : 0;
+            if (Markings.TryGetValue(category, out var markings) && markings.Count > 0)
+            {
+                continue;
+            }
 
+            var index = 0;
             while (points.Points > 0 && index < points.DefaultMarkings.Count)
             {
                 if (markingManager.Markings.TryGetValue(points.DefaultMarkings[index], out var prototype))

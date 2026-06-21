@@ -48,7 +48,7 @@
     Special:
       points: 4
       required: true
-      defaultMarkings: [ ProtoVoxMediumArmor, ProtoVoxVisor, ProtoVoxLights, ProtoVoxLEDFace ]
+      defaultMarkings: [ ProtoVoxVisor, ProtoVoxLights, ProtoVoxLEDFace ]
     Hair:
       points: 1
       required: false
@@ -83,6 +83,10 @@
     LeftFoot:
       points: 2
       required: false
+    Undershirt:
+      points: 1
+      required: false
+      defaultMarkings: [ ProtoVoxMediumArmor ]
     RightArm:
       points: 2
       required: false
@@ -94,9 +98,6 @@
       required: false
     LeftHand:
       points: 2
-      required: false
-    Undershirt:
-      points: 1
       required: false
     Underwear:
       points: 1

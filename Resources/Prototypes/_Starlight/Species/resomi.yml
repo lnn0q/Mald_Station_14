@@ -56,7 +56,7 @@
     Special:
       points: 4
       required: true
-      defaultMarkings: [ ProtoResomiMediumArmor, ProtoResomiVisor, ProtoResomiLights, ProtoResomiLEDFace ]
+      defaultMarkings: [ ProtoResomiVisor, ProtoResomiLights, ProtoResomiLEDFace ]
     Hair:
       points: 1
       required: false
@@ -95,6 +95,7 @@
     Undershirt:
       points: 1
       required: false
+      defaultMarkings: [ ProtoResomiMediumArmor ]
     Underwear:
       points: 1
       required: false

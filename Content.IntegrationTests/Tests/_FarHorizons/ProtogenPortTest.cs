@@ -1,9 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using System.IO;
+using System.Collections.Generic;
 using System.Linq;
+using Content.Server.Body.Components;
+using Content.Server.Body.Systems;
 using Content.Shared.Clothing.Components;
 using Content.Server.Station.Systems;
+using Content.Shared.Body.Part;
 using Content.Shared.Chat.Prototypes;
 using Content.Shared.Guidebook;
 using Content.Shared.Humanoid;
@@ -13,6 +17,7 @@ using Content.Shared.Preferences;
 using Content.Shared.Preferences.Loadouts;
 using Content.Shared.Speech;
 using Content.Shared.Speech.Components;
+using Content.Shared.Tag;
 using Content.Shared.Wagging;
 using Robust.Shared.ContentPack;
 using Robust.Shared.GameObjects;
@@ -51,15 +56,17 @@ public sealed class ProtogenPortTest
         "ProtoThaven",
     ];
 
-    private static readonly (string Id, string State)[] ProtogenFrames =
+    private static readonly string[] ProtogenFrames =
     [
-        ("ClothingOuterArmorProtogenLightBasic", "light"),
-        ("ClothingOuterArmorProtogenLightSpeed", "light"),
-        ("ClothingOuterArmorProtogenMediumBasic", "medium"),
-        ("ClothingOuterArmorProtogenMediumMagic", "medium"),
-        ("ClothingOuterArmorProtogenHeavyBasic", "heavy"),
-        ("ClothingOuterArmorProtogenHeavySpace", "heavy"),
+        "ClothingOuterArmorProtogenLightBasic",
+        "ClothingOuterArmorProtogenLightSpeed",
+        "ClothingOuterArmorProtogenMediumBasic",
+        "ClothingOuterArmorProtogenMediumMagic",
+        "ClothingOuterArmorProtogenHeavyBasic",
+        "ClothingOuterArmorProtogenHeavySpace",
     ];
+
+    private static readonly HashSet<string> BreathlessSpecies = ["ProtoKin"];
 
     [Test]
     public async Task RetainedSpeciesAreComplete()
@@ -141,15 +148,19 @@ public sealed class ProtogenPortTest
             foreach (var id in RemovedSpecies)
                 Assert.That(prototypes.HasIndex<SpeciesPrototype>(id), Is.False, $"Removed species {id} is still loaded");
 
-            foreach (var (id, state) in ProtogenFrames)
+            foreach (var id in ProtogenFrames)
             {
                 var frame = prototypes.Index<EntityPrototype>(id);
                 Assert.That(frame.TryGetComponent<ClothingComponent>(out var clothing, components), Is.True,
                     $"{id} has no clothing component");
                 Assert.That(clothing!.ClothingVisuals, Does.ContainKey("outerClothing2"),
-                    $"{id} must render on outerClothing2 so regular hardsuits render above the frame");
-                Assert.That(clothing.ClothingVisuals["outerClothing2"].Any(layer => layer.State == state), Is.True,
-                    $"{id} has no outerClothing2 frame state {state}");
+                    $"{id} must explicitly suppress generated outerClothing2 visuals");
+                Assert.That(clothing.ClothingVisuals["outerClothing2"], Is.Empty,
+                    $"{id} must remain stats-only and not overlap the Protogen chassis");
+                Assert.That(frame.TryGetComponent<TagComponent>(out var tags, components), Is.True,
+                    $"{id} has no tags");
+                Assert.That(tags!.Tags, Does.Contain(new ProtoId<TagPrototype>("SurgeryCompatibleArmor")),
+                    $"{id} must not block surgery");
             }
         });
 
@@ -162,6 +173,7 @@ public sealed class ProtogenPortTest
         await using var pair = await PoolManager.GetServerClient(new PoolSettings { Dirty = true });
         var server = pair.Server;
         var stationSpawning = server.System<StationSpawningSystem>();
+        var bodySystem = server.System<BodySystem>();
         var entityManager = server.ResolveDependency<IEntityManager>();
         var map = await pair.CreateTestMap();
 
@@ -170,16 +182,47 @@ public sealed class ProtogenPortTest
             foreach (var id in RetainedSpecies)
             {
                 var profile = new HumanoidCharacterProfile().WithSpecies(id);
+                EntityUid entity = default;
                 Assert.DoesNotThrow(() =>
                 {
-                    var entity = stationSpawning.SpawnPlayerMob(
+                    entity = stationSpawning.SpawnPlayerMob(
                         map.GridCoords,
                         job: "Passenger",
                         profile: profile,
                         station: null,
                         entity: null);
-                    entityManager.DeleteEntity(entity);
                 }, $"Failed to spawn retained species {id}");
+
+                Assert.That(bodySystem.GetBodyChildrenOfType(entity, BodyPartType.Chest).Count(), Is.EqualTo(1),
+                    $"{id} must have exactly one chest");
+                Assert.That(bodySystem.GetBodyChildrenOfType(entity, BodyPartType.Groin).Count(), Is.EqualTo(1),
+                    $"{id} must have exactly one groin for Ratbite surgery");
+
+                var organs = bodySystem.GetBodyOrgans(entity).ToArray();
+                Assert.That(organs, Is.Not.Empty, $"{id} has no attached organs");
+                foreach (var organ in organs)
+                {
+                    Assert.That(organ.Component.Body, Is.EqualTo(entity),
+                        $"{id} organ {entityManager.ToPrettyString(organ.Id)} is not attached to its body");
+                    Assert.That(organ.Component.SlotId, Is.Not.Empty,
+                        $"{id} organ {entityManager.ToPrettyString(organ.Id)} has no surgery slot ID");
+                }
+
+                var lungs = bodySystem.GetBodyOrganEntityComps<LungComponent>((entity, null));
+                if (BreathlessSpecies.Contains(id))
+                {
+                    Assert.That(lungs, Is.Empty, $"{id} is intentionally breathless but has lungs");
+                    Assert.That(entityManager.HasComponent<RespiratorComponent>(entity), Is.False,
+                        $"{id} is intentionally breathless but has a respirator");
+                }
+                else
+                {
+                    Assert.That(lungs, Is.Not.Empty, $"{id} has no attached functional lungs");
+                    Assert.That(entityManager.HasComponent<RespiratorComponent>(entity), Is.True,
+                        $"{id} has lungs but no respirator");
+                }
+
+                entityManager.DeleteEntity(entity);
             }
         });
 

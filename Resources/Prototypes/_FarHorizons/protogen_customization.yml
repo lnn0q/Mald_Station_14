@@ -110,7 +110,7 @@
 - type: marking
   id: ProtogenMediumArmor
   bodyPart: Undershirt # Starlight, render below clothes
-  markingCategory: Special
+  markingCategory: Undershirt
   speciesRestriction: [Protogen, ProtoReptilian, ProtoHuman, ProtoDwarf, ProtoArachnid] # Starlight, ProtoHumie -> ProtoHuman, ProtoDawi -> ProtoDwarf, ProtoReptile -> ProtoReptilian
   sprites:
   - sprite: _FarHorizons/Mobs/Customization/protogen/body_armor.rsi
@@ -175,7 +175,7 @@
 - type: marking
   id: ProtoVulpMediumArmor
   bodyPart: Undershirt # Starlight, render below clothes
-  markingCategory: Special
+  markingCategory: Undershirt
   speciesRestriction: [ProtoVulp]
   sprites:
   - sprite: _FarHorizons/Mobs/Customization/proto-vulp/body_armor.rsi
@@ -184,7 +184,7 @@
 - type: marking
   id: ProtoVulpMediumArmorAngled
   bodyPart: Undershirt # Starlight, render below clothes
-  markingCategory: Special
+  markingCategory: Undershirt
   speciesRestriction: [ProtoVulp]
   sprites:
   - sprite: _FarHorizons/Mobs/Customization/proto-vulp/body_armor.rsi
@@ -269,7 +269,7 @@
 - type: marking
   id: ProtoVoxMediumArmor
   bodyPart: Undershirt # Starlight, render below clothes
-  markingCategory: Special
+  markingCategory: Undershirt
   speciesRestriction: [ProtoVox]
   sprites:
   - sprite: _FarHorizons/Mobs/Customization/proto-vox/body_armor.rsi
@@ -305,7 +305,7 @@
 - type: marking
   id: ProtoKinMediumArmor
   bodyPart: Undershirt # Starlight, render below clothes
-  markingCategory: Special
+  markingCategory: Undershirt
   speciesRestriction: [ProtoKin]
   sprites:
   - sprite: _FarHorizons/Mobs/Customization/proto-kin/body_armor.rsi
@@ -343,7 +343,7 @@
 - type: marking
   id: ProtoResomiMediumArmor
   bodyPart: Undershirt # Starlight, render below clothes
-  markingCategory: Special
+  markingCategory: Undershirt
   speciesRestriction: [ProtoResomi]
   sprites:
   - sprite: _Starlight/Mobs/Customization/proto-resomi/body_armor.rsi # Starlight, new body sprite
@@ -401,7 +401,7 @@
 - type: marking
   id: ProtoMothMediumArmor
   bodyPart: Undershirt # Starlight, render below clothes
-  markingCategory: Special
+  markingCategory: Undershirt
   speciesRestriction: [ProtoMoth]
   sprites:
   - sprite: _FarHorizons/Mobs/Customization/proto-moth/body_armor.rsi
@@ -450,7 +450,7 @@
 - type: marking
   id: ProtoFelionoidMediumArmor
   bodyPart: Undershirt
-  markingCategory: Special
+  markingCategory: Undershirt
   speciesRestriction: [ProtoFelionoid]
   sprites:
   - sprite: _FarHorizons/Mobs/Customization/proto-feline/body_armor.rsi
@@ -495,7 +495,7 @@
 - type: marking
   id: ProtoDionaMediumArmor # Starlight, Dionae -> Diona
   bodyPart: Undershirt # Starlight, render below clothes
-  markingCategory: Special
+  markingCategory: Undershirt
   speciesRestriction: [ProtoDiona] # Starlight, Dionae -> Diona
   sprites:
   - sprite: _FarHorizons/Mobs/Customization/proto-dionae/body_armor.rsi

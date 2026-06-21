@@ -44,6 +44,7 @@ using Content.Shared.Item;
 using Content.Shared._Shitmed.Body.Organ;
 using Content.Shared._Shitmed.Body.Part;
 using Content.Shared.Popups;
+using Content.Shared.Tag;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
 using System.Linq;
@@ -53,6 +54,8 @@ namespace Content.Shared._Shitmed.Medical.Surgery;
 
 public abstract partial class SharedSurgerySystem
 {
+    private static readonly ProtoId<TagPrototype> SurgeryCompatibleArmorTag = "SurgeryCompatibleArmor";
+
     private EntityQuery<BodyPartComponent> _partQuery;
     private EntityQuery<SurgeryIgnoreClothingComponent> _ignoreQuery;
     private EntityQuery<SurgeryStepComponent> _stepQuery;
@@ -160,7 +163,8 @@ public abstract partial class SharedSurgerySystem
         {
             while (containerSlotEnumerator.MoveNext(out var containerSlot))
             {
-                if (!containerSlot.ContainedEntity.HasValue)
+                if (!containerSlot.ContainedEntity.HasValue
+                    || _tag.HasTag(containerSlot.ContainedEntity.Value, SurgeryCompatibleArmorTag))
                     continue;
 
                 args.Invalid = StepInvalidReason.Armor;

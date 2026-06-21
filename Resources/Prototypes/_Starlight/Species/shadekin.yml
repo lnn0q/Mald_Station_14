@@ -50,7 +50,7 @@
     Special:
       points: 4
       required: true
-      defaultMarkings: [ ProtoKinMediumArmor, ProtoKinVisor, ProtoKinLights, ProtoKinLEDFace ]
+      defaultMarkings: [ ProtoKinVisor, ProtoKinLights, ProtoKinLEDFace ]
     Hair:
       points: 1
       required: false
@@ -83,6 +83,7 @@
     Undershirt:
       points: 1
       required: false
+      defaultMarkings: [ ProtoKinMediumArmor ]
     Underwear:
       points: 1
       required: false

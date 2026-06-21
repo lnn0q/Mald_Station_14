@@ -33,6 +33,11 @@
         Quantity: 20
 
 - type: entity
+  id: GroinProtogen
+  name: protogen groin
+  parent: [PartProtogen, BaseGroinInorganic]
+
+- type: entity
   id: HeadProtogen
   name: protogen head # Starlight, quotation marks removed
   parent: [PartProtogen, BaseHead]
@@ -132,6 +137,11 @@
   - type: Sprite
     sprite: _FarHorizons/Mobs/Species/Proto-Vulp/parts.rsi
     state: "torso_m"
+
+- type: entity
+  id: GroinProtoVulp
+  name: proto-vulp groin
+  parent: GroinProtogen
 
 - type: entity
   id: HeadProtoVulp
