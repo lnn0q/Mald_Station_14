@@ -155,7 +155,7 @@
   name: trait-neurogenesis-imperfecta-name
   description: trait-neurogenesis-imperfecta-desc
   category: Physical
-  cost: -10
+  cost: -4
   speciesBlacklist:
   - IPC
   blacklist:
