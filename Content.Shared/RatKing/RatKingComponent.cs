@@ -109,10 +109,6 @@ public sealed partial class RatKingComponent : Component
         { RatKingOrderType.CheeseEm, "RatKingCommandCheeseEm" },
         { RatKingOrderType.Loose, "RatKingCommandLoose" }
     };
-
-    // Ratbite
-    [DataField]
-    public int MaxServantsToSpawn = 35;
 }
 
 [Serializable, NetSerializable]
