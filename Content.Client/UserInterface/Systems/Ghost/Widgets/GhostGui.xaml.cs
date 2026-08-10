@@ -33,7 +33,6 @@ public sealed partial class GhostGui : UIWidget
     public event Action? RequestWarpsPressed;
     public event Action? ReturnToBodyPressed;
     public event Action? GhostRolesPressed;
-    public event Action? AltServerConnectPressed;
     private int _prevNumberRoles;
 
     public GhostGui()
@@ -48,7 +47,6 @@ public sealed partial class GhostGui : UIWidget
         ReturnToBodyButton.OnPressed += _ => ReturnToBodyPressed?.Invoke();
         GhostRolesButton.OnPressed += _ => GhostRolesPressed?.Invoke();
         GhostRolesButton.OnPressed += _ => GhostRolesButton.StyleClasses.Remove(StyleBase.ButtonCaution);
-        AltServerConnectButton.OnPressed += _ => AltServerConnectPressed?.Invoke();
     }
 
     public void Hide()
@@ -58,7 +56,7 @@ public sealed partial class GhostGui : UIWidget
     }
 
     // Ghoob edit
-    public void Update(int? roles, bool? canReturnToBody, bool? canTakeGhostRoles = true, string altServerName = "", int altServerPopCount = 0)
+    public void Update(int? roles, bool? canReturnToBody, bool? canTakeGhostRoles = true)
     {
         ReturnToBodyButton.Disabled = !canReturnToBody ?? true;
         // Goobstation start
@@ -74,12 +72,8 @@ public sealed partial class GhostGui : UIWidget
                 GhostRolesButton.StyleClasses.Add(StyleBase.ButtonCaution);
             }
 
-            _prevNumberRoles = (int) roles;
+            _prevNumberRoles = (int)roles;
         }
-        // Ratbite
-        AltServerConnectButton.Visible = altServerName != "";
-        if (altServerName != "")
-            AltServerConnectButton.Text = Loc.GetString("ghost-gui-connect-alt-server", ("count", altServerPopCount), ("serverName", altServerName));
 
         TargetWindow.Populate();
     }
