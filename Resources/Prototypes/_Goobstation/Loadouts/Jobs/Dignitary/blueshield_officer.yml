@@ -141,12 +141,6 @@
   equipment:
     mask: FoodSnackLollypopBlueshield
 
-# Ratbite: BSO mask
-- type: loadout
-  id: BlushieldOfficerMaskGasSwat
-  equipment:
-    mask: ClothingBSOMaskGasSwat
-
 # Back
 - type: loadout
   id: BlueshieldOfficerBackpack
