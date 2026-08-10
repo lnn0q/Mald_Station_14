@@ -175,7 +175,7 @@ public sealed partial class ChangelingSystem
         };
         _doAfter.TryStartDoAfter(dargs);
     }
-    public ProtoId<DamageGroupPrototype> AbsorbedDamageGroup = "Airloss";
+    public ProtoId<DamageGroupPrototype> AbsorbedDamageGroup = "Genetic";
     private void OnAbsorbDoAfter(EntityUid uid, ChangelingIdentityComponent comp, ref AbsorbDNADoAfterEvent args)
     {
         if (args.Args.Target == null)
@@ -193,9 +193,7 @@ public sealed partial class ChangelingSystem
         _blood.ChangeBloodReagent(target, "FerrochromicAcid");
         _blood.SpillAllSolutions(target);
 
-	// Ratbite: don't let already unrevived entities be dehusked
-        var absorbedComponent = EnsureComp<AbsorbedComponent>(target);
-	absorbedComponent.CanDehusk = !HasComp<UnrevivableComponent>(target);
+        EnsureComp<AbsorbedComponent>(target);
         EnsureComp<UnrevivableComponent>(target);
 
         var popup = string.Empty;
@@ -441,7 +439,7 @@ public sealed partial class ChangelingSystem
             _popup.PopupEntity(Loc.GetString("changeling-stasis-exit-fail"), uid, uid);
             return;
         }
-        if (TryComp<AbsorbedComponent>(uid, out var absorbed) && !absorbed.Dehusked)
+        if (HasComp<AbsorbedComponent>(uid))
         {
             _popup.PopupEntity(Loc.GetString("changeling-stasis-exit-fail-dead"), uid, uid);
             return;

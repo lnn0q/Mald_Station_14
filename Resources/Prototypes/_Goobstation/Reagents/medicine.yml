@@ -957,12 +957,6 @@
           components:
           - type: PressureProtection # can't get through this to reach the bodyparts!
           invert: true
-      - !type:DehuskEffect
-        conditions:
-        - !type:HasComponentOnEquipmentCondition
-          components:
-          - type: PressureProtection # can't get through this to reach the bodyparts!
-          invert: true
   metabolisms:
     Medicine:
       effects:
