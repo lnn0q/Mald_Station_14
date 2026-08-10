@@ -94,7 +94,7 @@
   id: SpaceNinjaGear
   equipment:
     jumpsuit: ClothingUniformJumpsuitNinja
-    back: ClothingBackpackSatchel
+    back: ClothingBackpackSatchelChameleonNinja
     mask: ClothingMaskNinja
     head: ClothingHeadHelmetSpaceNinja
     eyes: ClothingEyesVisorNinja
@@ -102,7 +102,7 @@
     outerClothing: ClothingOuterSuitSpaceNinja
     shoes: ClothingShoesSpaceNinja
     id: AgentIDCard
-    ears: ClothingHeadsetGrey
+    ears: ClothingHeadsetChameleon
     pocket1: SpiderCharge
     pocket2: PinpointerStation
     belt: EnergyKatana

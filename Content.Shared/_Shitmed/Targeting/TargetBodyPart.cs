@@ -9,8 +9,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-namespace Content.Shared._Shitmed.Targeting;
+using Robust.Shared.Serialization;
 
+namespace Content.Shared._Shitmed.Targeting;
 
 /// <summary>
 /// Represents and enum of possible target parts.
@@ -20,6 +21,7 @@ namespace Content.Shared._Shitmed.Targeting;
 /// method in SharedTargetingSystem GetValidParts.
 /// </remarks>
 [Flags]
+[Serializable, NetSerializable]
 public enum TargetBodyPart : ushort
 {
     Head = 1,

@@ -315,6 +315,8 @@ namespace Content.Server.Lathe
                     if (comp.OutputToStorage && prototype.TryGetComponent<PhysicalCompositionComponent>(out var composition, _factory))
                     {
                         _materialStorage.TryChangeMaterialAmount(uid, composition.MaterialComposition);
+                        var ev = new LatheFinishPrintingEvent(currentRecipe, SpawnedEntity: null);
+                        RaiseLocalEvent(uid, ref ev);
                     }
                     else
                     {
@@ -322,6 +324,8 @@ namespace Content.Server.Lathe
                         _stack.TryMergeToContacts(result);
                         if (TryComp<ScannableForPointsComponent>(result, out var scannable)) // Goobstation
                             scannable.Points = 0; // Goobstation, this thing is to prevent ntr duping points via an emagged lathe
+                        var ev = new LatheFinishPrintingEvent(currentRecipe, result);
+                        RaiseLocalEvent(uid, ref ev);
                     }
                 }
 

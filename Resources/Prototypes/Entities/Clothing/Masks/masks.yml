@@ -1064,6 +1064,19 @@
     sprite: Clothing/Mask/ninja.rsi
   - type: Clothing
     sprite: Clothing/Mask/ninja.rsi
+  - type: ChameleonClothing
+    slot: [mask]
+    default: ClothingMaskNinja
+    affectedByEmp: false
+  - type: VoiceMask
+    voiceMaskSpeechVerb: VoiceModulator
+    enableAction: false
+  - type: UserInterface
+    interfaces:
+      enum.ChameleonUiKey.Key:
+        type: ChameleonBoundUserInterface
+      enum.VoiceMaskUIKey.Key:
+        type: VoiceModulatorBoundUserInterface
   - type: Item
     storedRotation: -90
   - type: EyeProtection
@@ -1071,6 +1084,7 @@
   - type: IdentityBlocker
   - type: Tag
     tags:
+    - WhitelistChameleon
     - IPCMaskWearable # EE - IPCs
 
 - type: entity

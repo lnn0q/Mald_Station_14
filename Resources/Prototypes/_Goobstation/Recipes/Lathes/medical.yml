@@ -68,6 +68,7 @@
     Plastic: 500
     Gold: 100
     Plasma: 100
+  radioChannel: Security
 
 - type: latheRecipe
   id: ParamedHypo
@@ -165,3 +166,4 @@
   icon:
     sprite: Structures/dispensers.rsi
     state: industrial-working
+  radioChannel: Security

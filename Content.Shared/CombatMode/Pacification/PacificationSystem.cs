@@ -170,6 +170,12 @@ public sealed class PacificationSystem : EntitySystem
         if (PacifiedCanAttack(uid, args.Target.Value, out var reason))
             return;
 
+        // Ratbite start
+        var ev = new BeforePacifiedAttackEvent(args.Target, args.Weapon, args.Disarm);
+        RaiseLocalEvent(uid, ref ev);
+        if (ev.Cancelled) return;
+        // Ratbite end
+
         ShowPopup((uid, component), args.Target.Value, reason);
         args.Cancel();
     }
@@ -243,7 +249,7 @@ public struct AttemptPacifiedThrowEvent
     public EntityUid ItemUid;
     public EntityUid PlayerUid;
 
-    public AttemptPacifiedThrowEvent(EntityUid itemUid,  EntityUid playerUid)
+    public AttemptPacifiedThrowEvent(EntityUid itemUid, EntityUid playerUid)
     {
         ItemUid = itemUid;
         PlayerUid = playerUid;

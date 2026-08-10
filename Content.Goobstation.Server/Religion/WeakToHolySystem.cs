@@ -21,6 +21,7 @@ using Robust.Shared.Physics.Events;
 using Robust.Shared.Timing;
 using Content.Shared._Shitmed.Targeting;
 using Content.Shared.Body.Components;
+using Content.Shared.Body.Part;
 using Content.Shared.Body.Systems;
 using Content.Shared.Timing; // Shitmed Change
 using Content.Shared._Shitmed.Damage; // Shitmed Change
@@ -67,8 +68,16 @@ public sealed class WeakToHolySystem : EntitySystem
 
     private void OnHolyDamageModify(Entity<DamageableComponent> ent, ref DamageModifyEvent args)
     {
-        var unholyEvent = new DamageUnholyEvent(args.Target, args.Origin);
-        RaiseLocalEvent(args.Target, ref unholyEvent);
+        var holyTarget = args.Target;
+        if (!HasComp<WeakToHolyComponent>(holyTarget)
+            && TryComp<BodyPartComponent>(ent, out var bodyPart)
+            && bodyPart.Body != null)
+        {
+            holyTarget = bodyPart.Body.Value;
+        }
+
+        var unholyEvent = new DamageUnholyEvent(holyTarget, args.Origin);
+        RaiseLocalEvent(holyTarget, ref unholyEvent);
 
         var holyCoefficient = 0f; // Default resistance
 
@@ -83,10 +92,10 @@ public sealed class WeakToHolySystem : EntitySystem
             },
         };
 
-        if (!TryComp<BodyComponent>(ent, out var body))
+        if (!TryComp<BodyComponent>(holyTarget, out var body))
             return;
 
-        if (!_body.TryGetRootPart(ent, out var rootPart, body: body))
+        if (!_body.TryGetRootPart(holyTarget, out var rootPart, body: body))
             return;
 
         foreach (var woundable in _wound.GetAllWoundableChildren(rootPart.Value))

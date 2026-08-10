@@ -229,6 +229,19 @@
     duration: 20
 
 - type: polymorph
+  id: BananiumLizardMutation
+  configuration:
+    entity: MobLizard
+    forced: true
+    transferName: true
+    inventory: Drop
+    revertOnDeath: false
+    revertOnCrit: false
+    allowRepeatedMorphs: true
+    polymorphSound: !type:SoundPathSpecifier
+      path: /Audio/Magic/forcewall.ogg
+
+- type: polymorph
   id: ArtifactLuminous
   configuration:
     entity: MobLuminousPerson

@@ -17,6 +17,7 @@
 using System.Numerics;
 using Content.Server.Radiation.Components;
 using Content.Server.Radiation.Events;
+using Content.Shared._BRatbite.Radiation;
 using Content.Shared.Radiation.Components;
 using Content.Shared.Radiation.Systems;
 using Content.Shared.Singularity.Components; // Goobstation - Radiation Overhaul
@@ -34,11 +35,15 @@ public partial class RadiationSystem
     private readonly record struct SourceData(
         float Intensity,
         Entity<RadiationSourceComponent, TransformComponent> Entity,
-        Vector2 WorldPosition)
+        Vector2 WorldPosition,
+        bool IsBananiumSource
+    )
     {
         public EntityUid? GridUid => Entity.Comp2.GridUid;
         public float Slope => Entity.Comp1.Slope;
         public TransformComponent Transform => Entity.Comp2;
+        // Ratbite
+        public bool IsWeakSource => Entity.Comp1.IsWeakSource;
     }
 
     private void UpdateGridcast()
@@ -71,11 +76,11 @@ public partial class RadiationSystem
             // I.e., a source & receiver in the same blocking container will get double-blocked, when no blocking should be applied.
             intensity = GetAdjustedRadiationIntensity(uid, intensity);
 
-            _sources.Add(new(intensity, (uid, source, xform), worldPos));
+            _sources.Add(new(intensity, (uid, source, xform), worldPos, HasComp<BananiumRadiationSourceComponent>(uid)));
         }
 
         var debugRays = debug ? new List<DebugRadiationRay>() : null;
-        var receiversTotalRads = new ValueList<(Entity<RadiationReceiverComponent>, float)>();
+        var receiversTotalRads = new ValueList<(Entity<RadiationReceiverComponent>, float Total, float Bananium)>();
 
         // TODO RADIATION Parallelize
         // Would need to give receiversTotalRads a fixed size.
@@ -87,15 +92,26 @@ public partial class RadiationSystem
             var destWorld = _transform.GetWorldPosition(destTrs);
 
             var rads = 0f;
+            var bananiumRads = 0f;
             foreach (var source in _sources)
             {
+                // Ratbite: Thick skin component
+                var blocksWeakSource = source.IsWeakSource && HasComp<ThickSkinComponent>(destUid);
+                if (blocksWeakSource && !source.IsBananiumSource)
+                    continue;
                 // send ray towards destination entity
-                if (Irradiate(source, destUid, destTrs, destWorld, debug) is not {} ray)
+                if (Irradiate(source, destUid, destTrs, destWorld, debug) is not { } ray)
                     continue;
 
                 // add rads to total rad exposure
                 if (ray.ReachedDestination)
-                    rads += ray.Rads;
+                {
+                    if (!blocksWeakSource)
+                        rads += ray.Rads;
+
+                    if (source.IsBananiumSource)
+                        bananiumRads += ray.Rads;
+                }
 
                 if (!debug)
                     continue;
@@ -113,8 +129,9 @@ public partial class RadiationSystem
 
             // Apply modifier if the destination entity is hidden within a radiation blocking container
             rads = GetAdjustedRadiationIntensity(destUid, rads);
+            bananiumRads = GetAdjustedRadiationIntensity(destUid, bananiumRads);
 
-            receiversTotalRads.Add(((destUid, dest), rads));
+            receiversTotalRads.Add(((destUid, dest), rads, bananiumRads));
         }
 
         // update information for debug overlay
@@ -124,7 +141,7 @@ public partial class RadiationSystem
         UpdateGridcastDebugOverlay(elapsedTime, totalSources, totalReceivers, debugRays);
 
         // send rads to each entity
-        foreach (var (receiver, rads) in receiversTotalRads)
+        foreach (var (receiver, rads, bananiumRads) in receiversTotalRads)
         {
             // update radiation value of receiver
             // if no radiation rays reached target, that will set it to 0
@@ -133,6 +150,12 @@ public partial class RadiationSystem
             // also send an event with combination of total rad
             if (rads > 0)
                 IrradiateEntity(receiver, rads, GridcastUpdateRate);
+
+            if (bananiumRads > 0)
+            {
+                var ev = new BananiumIrradiatedEvent(GridcastUpdateRate, bananiumRads);
+                RaiseLocalEvent(receiver, ev);
+            }
         }
 
         // raise broadcast event that radiation system has updated
@@ -154,10 +177,10 @@ public partial class RadiationSystem
         // Goobstation Start - Radiation Overhaul
         // get direction from rad source to destination and its distance
         var dir = destWorld - source.WorldPosition;
-        var dist = Math.Max(dir.Length(),0.5f);
+        var dist = Math.Max(dir.Length(), 0.5f);
         if (TryComp(source.Entity.Owner, out EventHorizonComponent? horizon)) // if we have a horizon emit radiation from the horizon,
             dist = Math.Max(dist - horizon.Radius, 0.5f);
-        var rads = source.Intensity / (dist );
+        var rads = source.Intensity / (dist);
         if (rads < 0.01)
             return null;
         // Goobstation End - Radiation Overhaul
@@ -170,7 +193,7 @@ public partial class RadiationSystem
         // if source and destination on the same grid it's possible that
         // between them can be another grid (ie. shuttle in center of donut station)
         // however we can do simplification and ignore that case
-        if (GridcastSimplifiedSameGrid && destTrs.GridUid is {} gridUid && source.GridUid == gridUid)
+        if (GridcastSimplifiedSameGrid && destTrs.GridUid is { } gridUid && source.GridUid == gridUid)
         {
             if (!_gridQuery.TryGetComponent(gridUid, out var gridComponent))
                 return ray;
@@ -219,15 +242,15 @@ public partial class RadiationSystem
 
         if (delta.LengthSquared() < 0.0001f)
         {
-            yield return (new Vector2i((int)Math.Floor(sourceGridPos.X), (int)Math.Floor(sourceGridPos.Y)), 0f);
+            yield return (new Vector2i((int) Math.Floor(sourceGridPos.X), (int) Math.Floor(sourceGridPos.Y)), 0f);
             yield break;
         }
-        
-        var currentX = (int)Math.Floor(sourceGridPos.X);
-        var currentY = (int)Math.Floor(sourceGridPos.Y);
-        var destX = (int)Math.Floor(destGridPos.X);
-        var destY = (int)Math.Floor(destGridPos.Y);
-        
+
+        var currentX = (int) Math.Floor(sourceGridPos.X);
+        var currentY = (int) Math.Floor(sourceGridPos.Y);
+        var destX = (int) Math.Floor(destGridPos.X);
+        var destY = (int) Math.Floor(destGridPos.Y);
+
         var stepX = 0;
         float tDeltaX = 0, tMaxX = float.MaxValue;
         if (delta.X != 0)
@@ -237,7 +260,7 @@ public partial class RadiationSystem
             tMaxX = (xEdge - sourceGridPos.X) / delta.X;
             tDeltaX = stepX / delta.X;
         }
-        
+
         var stepY = 0;
         float tDeltaY = 0, tMaxY = float.MaxValue;
         if (delta.Y != 0)
@@ -247,16 +270,16 @@ public partial class RadiationSystem
             tMaxY = (yEdge - sourceGridPos.Y) / delta.Y;
             tDeltaY = stepY / delta.Y;
         }
-        
+
         var entry = sourceGridPos;
         var maxIterations = Math.Abs(destX - currentX) + Math.Abs(destY - currentY) + 2;
         var iterations = 0;
-        
+
         while (true)
         {
             if (++iterations > maxIterations)
                 yield break;
-            
+
             var tExit = Math.Min(tMaxX, tMaxY);
             var exitIsX = tMaxX < tMaxY;
             if (tExit > 1f)
@@ -264,10 +287,10 @@ public partial class RadiationSystem
             var exit = sourceGridPos + delta * tExit;
             var cell = new Vector2i(currentX, currentY);
             yield return (cell, (exit - entry).Length());
-            
+
             if (tExit >= 1f - 1e-6f)
                 break;
-                
+
             if (exitIsX)
             {
                 currentX += stepX;
@@ -319,7 +342,7 @@ public partial class RadiationSystem
             dstLocal.X / grid.Comp1.TileSize,
             dstLocal.Y / grid.Comp1.TileSize);
 
-        foreach (var (point,dist) in AdvancedGridRaycast(sourceGrid,destGrid))
+        foreach (var (point, dist) in AdvancedGridRaycast(sourceGrid, destGrid))
         {
             if (resistanceMap.TryGetValue(point, out var resData))
             {
@@ -375,7 +398,7 @@ public partial class RadiationSystem
             if (_blockerQuery.TryComp(xform.ParentUid, out var blocker))
             {
                 // Goobstation Start - Radiation Overhaul
-                var ratio = blocker.RadDecay>2? 1 / (blocker.RadDecay/2):1;
+                var ratio = blocker.RadDecay > 2 ? 1 / (blocker.RadDecay / 2) : 1;
                 rads = (rads - blocker.RadResistance) * ratio;
                 if (rads < 0.1)
                     return 0;

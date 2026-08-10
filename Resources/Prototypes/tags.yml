@@ -1585,6 +1585,9 @@
   id: SubdermalImplant
 
 - type: Tag
+  id: SpaceNinjaChameleonJumpsuit
+
+- type: Tag
   id: SuitEVA
 
 - type: Tag

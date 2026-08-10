@@ -69,6 +69,7 @@ using Robust.Shared.Collections;
 using Robust.Shared.Network;
 using Robust.Shared.Timing;
 using Content.Shared.Item.ItemToggle;
+using Content.Shared.Item.ItemToggle.Components;
 // Lavaland Change
 using Content.Shared.StatusEffect;
 using Content.Shared.Stunnable;
@@ -116,6 +117,7 @@ public abstract class SharedWieldableSystem : EntitySystem
         SubscribeLocalEvent<SpeedModifiedOnWieldComponent, HeldRelayedEvent<RefreshMovementSpeedModifiersEvent>>(OnRefreshSpeedWielded);
 
         SubscribeLocalEvent<IncreaseDamageOnWieldComponent, GetMeleeDamageEvent>(OnGetMeleeDamage);
+        SubscribeLocalEvent<ItemToggleWieldDamageComponent, ItemToggledEvent>(OnToggleWieldDamage);
 
         // Goobstation
         SubscribeLocalEvent<WieldableComponent, ComponentShutdown>(OnComponentShutdown);
@@ -448,6 +450,18 @@ public abstract class SharedWieldableSystem : EntitySystem
             return;
 
         args.Damage += component.BonusDamage;
+    }
+
+    private void OnToggleWieldDamage(Entity<ItemToggleWieldDamageComponent> ent, ref ItemToggledEvent args)
+    {
+        if (!TryComp(ent, out IncreaseDamageOnWieldComponent? increaseDamage))
+            return;
+
+        var damage = args.Activated ? ent.Comp.ActivatedDamage : ent.Comp.DeactivatedDamage;
+        if (damage == null)
+            return;
+
+        increaseDamage.BonusDamage = damage;
     }
 
     // Goobstation

@@ -184,6 +184,8 @@ namespace Content.Client.Input
                 common.AddFunction(boundKey);
             }
 
+            common.AddFunction(ContentKeyFunctions.ToggleHotbarActionLock);
+
             var aghost = contexts.New("aghost", "common");
             aghost.AddFunction(EngineKeyFunctions.MoveUp);
             aghost.AddFunction(EngineKeyFunctions.MoveDown);

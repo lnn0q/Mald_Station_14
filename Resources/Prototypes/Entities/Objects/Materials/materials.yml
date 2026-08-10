@@ -690,6 +690,8 @@
     heldPrefix: bananium
   - type: RadiationSource # Goobstation - ITS BACK
     intensity: 0.1
+    isWeakSource: true # ratbite, thick skin component
+  - type: BananiumRadiationSource
 
 - type: entity
   parent: MaterialBananium

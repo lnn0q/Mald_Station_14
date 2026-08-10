@@ -3,6 +3,16 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 - type: trait
+  id: AffectedByHoly
+  name: trait-affected-by-holy-name
+  description: trait-affected-by-holy-desc
+  category: Physical
+  cost: -1
+  components:
+  - type: WeakToHoly
+    alwaysTakeHoly: true
+
+- type: trait
   id: Small
   name: trait-small-name
   description: trait-small-desc
@@ -13,6 +23,7 @@
   - Resomi
   - Rodentia
   - Vulpkanin
+  - Moth # moff small.. if vulp small then moff small..
   components:
   - type: SmallTrait
 
@@ -232,3 +243,12 @@
   - Oni
   components:
     - type: ScaredOfGuns
+
+- type: trait
+  id: Stowaway
+  name: trait-stowaway-name
+  description: trait-stowaway-desc
+  category: Mental
+  cost: -1
+  components:
+  - type: Stowaway

@@ -1031,10 +1031,26 @@
   name: ninja jumpsuit
   description: Comfortable ninja suit, for convenience when relaxing and when you need to practice.
   components:
+  - type: Tag
+    tags:
+    - ClothMade
+    - Recyclable
+    - WhitelistChameleon
+    - Skirt # Goobstation
+    - SpaceNinjaChameleonJumpsuit
   - type: Sprite
     sprite: Clothing/Uniforms/Jumpsuit/ninja.rsi
   - type: Clothing
     sprite: Clothing/Uniforms/Jumpsuit/ninja.rsi
+  - type: ChameleonClothing
+    slot: [innerclothing]
+    default: ClothingUniformJumpsuitNinja
+    requireTag: SpaceNinjaChameleonJumpsuit
+    affectedByEmp: false
+  - type: UserInterface
+    interfaces:
+      enum.ChameleonUiKey.Key:
+        type: ChameleonBoundUserInterface
 
 - type: entity
   parent: ClothingUniformBase

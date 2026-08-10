@@ -337,6 +337,7 @@
  #  - id: CartridgeRocketSingularityBuster
  #  - id: WeaponLauncherSingularityBuster
     - id: MachinePowerTransmissionLaserFlatpack
+    - id: MachineFlatpackerFlatpack
     - id: RCDRechargingCE
 
 # Hardsuit table, used for suit storage as well
@@ -476,6 +477,7 @@
    #- id: ClothingBeltGeminiHoloProjector # Goobstation - Who better to do science with than yourself?
     - id: XenobiologyBountyComputerCircuitboard # Goobstation
     - id: MMI # Goobstation
+    - id: MachineFlatpackerFlatpack
 
 # Hardsuit table, used for suit storage as well
 - type: entityTable

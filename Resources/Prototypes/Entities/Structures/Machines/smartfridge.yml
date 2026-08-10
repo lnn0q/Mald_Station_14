@@ -53,6 +53,7 @@
       path: /Audio/Machines/windoor_open.ogg
       params:
         volume: -3
+  - type: BlastShelter
   - type: ContainerContainer
     containers:
       entity_storage: !type:Container

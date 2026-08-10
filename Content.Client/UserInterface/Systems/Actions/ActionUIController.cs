@@ -129,6 +129,7 @@ using Content.Shared._Goobstation.Wizard.SpellCards;
 using Content.Shared.Actions;
 using Content.Shared.Damage;
 using Content.Shared.Actions.Components;
+using Content.Shared.CCVar;
 using Content.Shared.Charges.Systems;
 using Content.Shared.Heretic;
 using Content.Shared.Input;
@@ -140,6 +141,7 @@ using Robust.Client.Player;
 using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controllers;
 using Robust.Client.UserInterface.Controls;
+using Robust.Shared.Configuration;
 using Robust.Shared.Graphics.RSI;
 using Robust.Shared.Input;
 using Robust.Shared.Input.Binding;
@@ -163,6 +165,7 @@ public sealed class ActionUIController : UIController, IOnStateChanged<GameplayS
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly IPlayerManager _playerManager = default!;
     [Dependency] private readonly IInputManager _input = default!;
+    [Dependency] private readonly IConfigurationManager _cfg = default!;
     [Dependency] private readonly IEyeManager _eye = default!; // Goobstation
 
     [UISystemDependency] private readonly ActionsSystem? _actionsSystem = default;
@@ -187,6 +190,7 @@ public sealed class ActionUIController : UIController, IOnStateChanged<GameplayS
     private MenuButton? ActionButton => UIManager.GetActiveUIWidgetOrNull<MenuBar.Widgets.GameTopMenuBar>()?.ActionButton;
 
     public bool IsDragging => _menuDragHelper.IsDragging;
+    private bool HotbarActionLock => _cfg.GetCVar(CCVars.HotbarActionLock);
 
     /// <summary>
     /// Action slot we are currently selecting a target for.
@@ -268,6 +272,8 @@ public sealed class ActionUIController : UIController, IOnStateChanged<GameplayS
         builder
             .Bind(ContentKeyFunctions.OpenActionsMenu,
                 InputCmdHandler.FromDelegate(_ => ToggleWindow()))
+            .Bind(ContentKeyFunctions.ToggleHotbarActionLock,
+                InputCmdHandler.FromDelegate(_ => ToggleHotbarActionLock()))
             .BindBefore(EngineKeyFunctions.Use, new PointerInputCmdHandler(TargetingOnUse, outsidePrediction: true),
                     typeof(ConstructionSystem), typeof(DragDropSystem))
                 .BindBefore(ContentKeyFunctions.AltActivateItemInWorld, new PointerInputCmdHandler(AltTargeting, outsidePrediction: true)) // Goobstation
@@ -286,6 +292,12 @@ public sealed class ActionUIController : UIController, IOnStateChanged<GameplayS
 
         StopTargeting();
         return true;
+    }
+
+    private void ToggleHotbarActionLock()
+    {
+        _cfg.SetCVar(CCVars.HotbarActionLock, !HotbarActionLock);
+        _cfg.SaveToFile();
     }
 
     /// <summary>
@@ -813,6 +825,9 @@ public sealed class ActionUIController : UIController, IOnStateChanged<GameplayS
     {
         if (args.Function == EngineKeyFunctions.UIRightClick)
         {
+            if (HotbarActionLock)
+                return;
+
             SetAction(button, null);
             args.Handle();
             return;
@@ -827,7 +842,7 @@ public sealed class ActionUIController : UIController, IOnStateChanged<GameplayS
     private void HandleActionPressed(GUIBoundKeyEventArgs args, ActionButton button)
     {
         args.Handle();
-        if (button.Action != null)
+        if (!HotbarActionLock && button.Action != null)
         {
             _menuDragHelper.MouseDown(button);
             return;
@@ -853,7 +868,11 @@ public sealed class ActionUIController : UIController, IOnStateChanged<GameplayS
 
         if (_menuDragHelper.IsDragging)
         {
-            DragAction();
+            if (HotbarActionLock)
+                _menuDragHelper.EndDrag();
+            else
+                DragAction();
+
             return;
         }
 
@@ -879,6 +898,9 @@ public sealed class ActionUIController : UIController, IOnStateChanged<GameplayS
 
     private bool OnMenuBeginDrag()
     {
+        if (HotbarActionLock)
+            return false;
+
         // TODO ACTIONS
         // The dragging icon shuld be based on the entity's icon style. I.e. if the action has a large icon texture,
         // and a small item/provider sprite, then the dragged icon should be the big texture, not the provider.
@@ -905,6 +927,9 @@ public sealed class ActionUIController : UIController, IOnStateChanged<GameplayS
 
     private bool OnMenuContinueDrag(float frameTime)
     {
+        if (HotbarActionLock)
+            return false;
+
         LayoutContainer.SetPosition(_dragShadow, UIManager.MousePositionScaled.Position - new Vector2(32, 32));
         _dragShadow.Visible = true;
         return true;

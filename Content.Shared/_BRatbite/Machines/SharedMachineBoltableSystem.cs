@@ -1,12 +1,6 @@
 using Robust.Shared.Serialization;
 using Content.Shared.Popups;
 using Content.Shared.Construction.Components;
-using Content.Shared.Database;
-using Content.Shared._BRatbite.Machines;
-using Content.Shared.Wires;
-using Robust.Shared.GameObjects;
-using Robust.Shared.Audio.Systems;
-using Content.Shared._BRatbite.Machines;
 
 namespace Content.Shared._BRatbite.Machines;
 
@@ -21,6 +15,7 @@ public abstract class SharedMachineBoltableSystem : EntitySystem
 
         SubscribeLocalEvent<BoltableMachineComponent, AnchorAttemptEvent>(OnAnchorAttempt);
         SubscribeLocalEvent<BoltableMachineComponent, UnanchorAttemptEvent>(OnUnanchorAttempt);
+        SubscribeLocalEvent<BoltableMachineComponent, AnchorStateChangedEvent>(OnAnchorStateChange);
     }
 
     private void OnAnchorAttempt(Entity<BoltableMachineComponent> ent, ref AnchorAttemptEvent args)
@@ -48,8 +43,12 @@ public abstract class SharedMachineBoltableSystem : EntitySystem
         return false;
     }
 
-
-
+    private void OnAnchorStateChange(Entity<BoltableMachineComponent> ent, ref AnchorStateChangedEvent args)
+    {
+        // Unbolt if the anchor state changes
+        if (!args.Anchored)
+            ent.Comp.Bolted = false;
+    }
 }
 
 [NetSerializable, Serializable]

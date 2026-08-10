@@ -199,6 +199,43 @@
     - ClothMade
 
 - type: entity
+  parent: BaseTalkingPlushie
+  id: PlushieBatch
+  name: batch plushie
+  description: A cute plushie of Batch B. Barksby.
+  components:
+  - type: Sprite
+    sprite: _BRatBites/Objects/Fun/Plushies/batchplush.rsi
+    state: icon
+  - type: Item
+    sprite: _BRatBites/Objects/Fun/Plushies/batchplush.rsi
+    inhandVisuals:
+      left:
+      - state: inhand-left
+        shader: shaded
+      right:
+      - state: inhand-right
+        shader: shaded
+  - type: SpeakOnTrigger
+    pack: PlushiesBatch
+  - type: Speech
+    speechSounds: Vulpkanin
+  - type: Clothing
+    clothingVisuals:
+      head:
+      - state: equipped-HELMET
+        shader: shaded
+    quickEquip: false
+    sprite: _BRatBites/Objects/Fun/Plushies/batchplush.rsi
+    slots:
+    - HEAD
+  - type: BatchSmiteOnHit
+  - type: Tag
+    tags:
+    - Payload
+    - ClothMade
+
+- type: entity
   parent: BasePlushie
   id: KarlPlushie
   name: karl massie plushie

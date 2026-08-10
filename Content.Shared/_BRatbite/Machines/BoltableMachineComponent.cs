@@ -1,5 +1,7 @@
 using Robust.Shared.GameStates;
 using Robust.Shared.Audio;
+using Robust.Shared.Prototypes;
+using Content.Shared.DeviceLinking;
 
 namespace Content.Shared._BRatbite.Machines;
 
@@ -7,7 +9,16 @@ namespace Content.Shared._BRatbite.Machines;
 public sealed partial class BoltableMachineComponent : Component
 {
     [DataField, AutoNetworkedField]
-    public bool Bolted = true;
+    public bool Bolted;
+
+    [DataField]
+    public ProtoId<SinkPortPrototype> OnPort = "On";
+
+    [DataField]
+    public ProtoId<SinkPortPrototype> OffPort = "Off";
+
+    [DataField]
+    public ProtoId<SinkPortPrototype> TogglePort = "Toggle";
 
     [DataField]
     public SoundSpecifier BoltSound = new SoundPathSpecifier("/Audio/Machines/boltsdown.ogg");

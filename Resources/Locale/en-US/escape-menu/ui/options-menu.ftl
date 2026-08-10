@@ -302,6 +302,7 @@ ui-options-function-hotbar-shift7 = Hotbar slot Shift+7
 ui-options-function-hotbar-shift8 = Hotbar slot Shift+8
 ui-options-function-hotbar-shift9 = Hotbar slot Shift+9
 ui-options-function-hotbar-shift0 = Hotbar slot Shift+0
+ui-options-function-toggle-hotbar-action-lock = Toggle hotbar action lock
 ui-options-function-loadout1 = Hotbar Loadout 1
 ui-options-function-loadout2 = Hotbar Loadout 2
 ui-options-function-loadout3 = Hotbar Loadout 3

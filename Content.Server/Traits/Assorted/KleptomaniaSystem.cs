@@ -129,7 +129,8 @@ public sealed class KleptomaniaSystem : EntitySystem
                 item is not { } held)
                 continue;
 
-            if (_strippable.TryStartStripRemoveHand(user, target, held, hand, strippable))
+            // Ratbite: Skip ssd warning
+            if (_strippable.TryStartStripRemoveHand(user, target, held, hand, strippable, shouldWarn: false))
                 return true;
         }
 
@@ -157,7 +158,8 @@ public sealed class KleptomaniaSystem : EntitySystem
 
         foreach (var (item, slot) in options)
         {
-            if (_strippable.TryStartStripRemoveInventory(user, target, item, slot))
+            // Ratbite: skip ssd warning
+            if (_strippable.TryStartStripRemoveInventory(user, target, item, slot, shouldWarn: false))
                 return true;
         }
 

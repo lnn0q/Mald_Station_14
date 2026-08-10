@@ -8,3 +8,9 @@
   values:
     prefix: plushies-carmelladot-
     count: 13
+
+- type: localizedDataset
+  id: PlushiesBatch
+  values:
+    prefix: plushies-batch-
+    count: 10

@@ -79,6 +79,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using System.Linq;
+using Content.Shared._BRatbite.Strip;
 using Content.Shared._Goobstation.Heretic.Components;
 using Content.Shared.Administration.Logs;
 using Content.Shared.CombatMode;
@@ -95,9 +96,11 @@ using Content.Shared.Interaction.Components;
 using Content.Shared.Interaction.Events;
 using Content.Shared.Inventory;
 using Content.Shared.Inventory.VirtualItem;
+using Content.Shared.Mind;
 using Content.Shared.Popups;
 using Content.Shared.Strip.Components;
 using Content.Shared.Verbs;
+using Robust.Shared.Player;
 using Robust.Shared.Utility;
 
 namespace Content.Shared.Strip;
@@ -116,6 +119,8 @@ public abstract class SharedStrippableSystem : EntitySystem
     [Dependency] private readonly SharedPopupSystem _popupSystem = default!;
 
     [Dependency] private readonly ISharedAdminLogManager _adminLogger = default!;
+    [Dependency] private readonly SharedMindSystem _mindSystem = default!;
+    [Dependency] private readonly ISharedPlayerManager _playerManager = default!;
 
     public override void Initialize()
     {
@@ -361,6 +366,36 @@ public abstract class SharedStrippableSystem : EntitySystem
         return true;
     }
 
+    // Ratbite start
+    private bool WarnSsd(EntityUid user, EntityUid target, EntityUid item)
+    {
+        var strippableWarning = EnsureComp<StrippableWarningComponent>(user);
+        if (strippableWarning.LastEntity != target)
+            strippableWarning.HasBeenWarned = false;
+        strippableWarning.LastEntity = target;
+        var hasMind = _mindSystem.TryGetMind(target, out EntityUid mind, out var mindComponent);
+        var session = mindComponent?.UserId;
+        var hasActiveSession = session != null && _playerManager.ValidSessionId(session.Value);
+        if (hasMind && !hasActiveSession)
+        {
+            if (!strippableWarning.HasBeenWarned)
+            {
+                _popupSystem.PopupCursor(Loc.GetString("ssd-strip-warning"), user, PopupType.LargeCaution);
+                strippableWarning.HasBeenWarned = true;
+                return false;
+            }
+            else
+            {
+                _popupSystem.PopupCursor(Loc.GetString("ssd-strip-incident-reported"), user, PopupType.LargeCaution);
+                _adminLogger.Add(LogType.Action, LogImpact.Extreme, $"{ToPrettyString(user):player} is stealing {ToPrettyString(item):item} from ssd player {ToPrettyString(target):player}");
+                return true;
+            }
+        }
+        // True means we can strip
+        return true;
+    }
+    // Ratbite end
+
     /// <summary>
     ///     Begins a DoAfter to remove the item from the target's inventory and insert it in the user's active hand.
     /// </summary>
@@ -368,9 +403,14 @@ public abstract class SharedStrippableSystem : EntitySystem
         EntityUid user,
         EntityUid target,
         EntityUid item,
-        string slot)
+        string slot,
+    bool shouldWarn = true)
     {
         if (!CanStripRemoveInventory(user, target, item, slot))
+            return;
+
+        // Ratbite
+        if (shouldWarn && !WarnSsd(user, target, item))
             return;
 
         if (!_inventorySystem.TryGetSlot(target, slot, out var slotDef))
@@ -421,7 +461,8 @@ public abstract class SharedStrippableSystem : EntitySystem
         EntityUid user,
         EntityUid target,
         EntityUid item,
-        string slot)
+        string slot,
+    bool shouldWarn = true)
     {
         if (!_interactionSystem.InRangeAndAccessible(user, target))
             return false;
@@ -429,7 +470,7 @@ public abstract class SharedStrippableSystem : EntitySystem
         if (!CanStripRemoveInventory(user, target, item, slot))
             return false;
 
-        StartStripRemoveInventory(user, target, item, slot);
+        StartStripRemoveInventory(user, target, item, slot, shouldWarn: shouldWarn);
         return true;
     }
 
@@ -607,7 +648,8 @@ public abstract class SharedStrippableSystem : EntitySystem
         Entity<HandsComponent?> target,
         EntityUid item,
         string handName,
-        StrippableComponent? targetStrippable = null)
+        StrippableComponent? targetStrippable = null,
+    bool shouldWarn = true)
     {
         if (!Resolve(user, ref user.Comp) ||
             !Resolve(target, ref target.Comp) ||
@@ -615,6 +657,10 @@ public abstract class SharedStrippableSystem : EntitySystem
             return;
 
         if (!CanStripRemoveHand(user, target, item, handName))
+            return;
+
+        // Ratbite
+        if (shouldWarn && !WarnSsd(user, target, item))
             return;
 
         var (time, stealth, subtle) = GetStripTimeModifiers(user, target, null, targetStrippable.HandStripDelay);
@@ -660,7 +706,8 @@ public abstract class SharedStrippableSystem : EntitySystem
         Entity<HandsComponent?> target,
         EntityUid item,
         string handName,
-        StrippableComponent? targetStrippable = null)
+        StrippableComponent? targetStrippable = null,
+    bool shouldWarn = true)
     {
         if (!_interactionSystem.InRangeAndAccessible(user.Owner, target.Owner))
             return false;
@@ -668,7 +715,7 @@ public abstract class SharedStrippableSystem : EntitySystem
         if (!CanStripRemoveHand(user.Owner, target, item, handName))
             return false;
 
-        StartStripRemoveHand(user, target, item, handName, targetStrippable);
+        StartStripRemoveHand(user, target, item, handName, targetStrippable, shouldWarn: shouldWarn);
         return true;
     }
 
@@ -707,7 +754,7 @@ public abstract class SharedStrippableSystem : EntitySystem
 
         if (ev.Event.InventoryOrHand)
         {
-            if ( ev.Event.InsertOrRemove && !CanStripInsertInventory((entity.Owner, entity.Comp), args.Target.Value, args.Used.Value, ev.Event.SlotOrHandName) ||
+            if (ev.Event.InsertOrRemove && !CanStripInsertInventory((entity.Owner, entity.Comp), args.Target.Value, args.Used.Value, ev.Event.SlotOrHandName) ||
                 !ev.Event.InsertOrRemove && !CanStripRemoveInventory(entity.Owner, args.Target.Value, args.Used.Value, ev.Event.SlotOrHandName))
             {
                 ev.Cancel();
@@ -715,7 +762,7 @@ public abstract class SharedStrippableSystem : EntitySystem
         }
         else
         {
-            if ( ev.Event.InsertOrRemove && !CanStripInsertHand((entity.Owner, entity.Comp), args.Target.Value, args.Used.Value, ev.Event.SlotOrHandName) ||
+            if (ev.Event.InsertOrRemove && !CanStripInsertHand((entity.Owner, entity.Comp), args.Target.Value, args.Used.Value, ev.Event.SlotOrHandName) ||
                 !ev.Event.InsertOrRemove && !CanStripRemoveHand(entity.Owner, args.Target.Value, args.Used.Value, ev.Event.SlotOrHandName))
             {
                 ev.Cancel();

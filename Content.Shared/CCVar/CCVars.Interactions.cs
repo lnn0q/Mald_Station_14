@@ -66,6 +66,12 @@ public sealed partial class CCVars
         CVarDef.Create("control.static_storage_ui", true, CVar.CLIENTONLY | CVar.ARCHIVE);
 
     /// <summary>
+    ///     Whether or not action hotbar buttons can be moved or removed.
+    /// </summary>
+    public static readonly CVarDef<bool> HotbarActionLock =
+        CVarDef.Create("control.hotbar_lock_actions", false, CVar.CLIENTONLY | CVar.ARCHIVE);
+
+    /// <summary>
     ///     Whether or not the storage window uses a transparent or opaque sprite.
     /// </summary>
     public static readonly CVarDef<bool> OpaqueStorageWindow =

@@ -18,13 +18,13 @@
   categories:
   - PermaEntertainment
 
-- type: listing
-  id: PermaUplinkBotanyStarter
-  productEntity: CratePermaBotanyStarter
-  cost:
-    PermaPoint: 3
-  categories:
-  - PermaBotany
+#- type: listing
+#  id: PermaUplinkBotanyStarter
+#  productEntity: CratePermaBotanyStarter
+#  cost:
+#    PermaPoint: 3
+#  categories:
+#  - PermaBotany - Pending Rework
 
 - type: listing
   id: PermaUplinkHeadphones

@@ -11,3 +11,14 @@ plushies-carmelladot-10 = Please don’t throw me into the burn chamber!
 plushies-carmelladot-11 = They say carmelly , can you help drop my permas.
 plushies-carmelladot-12 = The chemist got incomp for not making derma , feeling like a clown call it jerma.
 plushies-carmelladot-13 = I circle round the station, cargo doin’ tax evasion and I just hit on the slots, I made a lots.
+
+plushies-batch-1 = Woof
+plushies-batch-2 = Fuck you!
+plushies-batch-3 = Enjoy your time in the Sanitarium c:
+plushies-batch-4 = Fun fact: I can gib people if you hit them hard enough!
+plushies-batch-5 = Why work hard when you can fard hard instead
+plushies-batch-6 = No chat, I am NOT sending death squad!
+plushies-batch-7 = I'm not responsible for your chudouts, moron
+plushies-batch-8 = Oh twatting hell
+plushies-batch-9 = Why do we have to call ERT for this one fucking Heretic I swear to fuck
+plushies-batch-10 = I'm watching you.

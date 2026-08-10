@@ -6,5 +6,7 @@
 
 item-toggle-activate = Activate
 item-toggle-deactivate = Deactivate
+fireaxe-enable-fire = Enable fire
+fireaxe-disable-fire = Disable fire
 
 item-toggle-size-fail = Doesn't fit.

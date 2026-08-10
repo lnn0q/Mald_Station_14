@@ -352,6 +352,9 @@
   name: space ninja gloves
   description: These black nano-enhanced gloves insulate from electricity and provide fire resistance.
   components:
+  - type: Tag
+    tags:
+    - WhitelistChameleon
   - type: Sprite
     sprite: Clothing/Hands/Gloves/spaceninja.rsi
     layers:
@@ -359,13 +362,15 @@
       map: [ "enum.ToggleableVisuals.Layer" ]
   - type: Clothing
     sprite: Clothing/Hands/Gloves/spaceninja.rsi
+  - type: ChameleonClothing
+    slot: [gloves]
+    default: ClothingHandsGlovesSpaceNinja
+    affectedByEmp: false
+  - type: UserInterface
+    interfaces:
+      enum.ChameleonUiKey.Key:
+        type: ChameleonBoundUserInterface
   - type: Appearance
-  - type: GenericVisualizer
-    visuals:
-      enum.ToggleableVisuals.Enabled:
-        enum.ToggleableVisuals.Layer:
-          True: {state: icon-green}
-          False: {state: icon}
   - type: Insulated
   - type: Fiber
     fiberMaterial: fibers-nanomachines

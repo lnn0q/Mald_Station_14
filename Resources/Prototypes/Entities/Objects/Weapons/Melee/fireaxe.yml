@@ -142,8 +142,43 @@
         Heat: 10
         Slash: 10
         Structural: 80
-  - type: IgniteOnMeleeHit
-    fireStacks: 5 #Goobchange
+  - type: ItemToggle
+    activated: true
+    onUse: false
+    wieldToggle: false
+    verbToggleOn: fireaxe-enable-fire
+    verbToggleOff: fireaxe-disable-fire
+  - type: ItemToggleMeleeWeapon
+    activatedDamage:
+      types:
+        Heat: 5
+        Slash: 10
+        Structural: 20
+      woundSeverityMultipliers:
+        Slash: 2.5
+        Heat: 2
+    deactivatedDamage:
+      types:
+        Blunt: 5
+        Slash: 10
+        Structural: 10
+      woundSeverityMultipliers:
+        Blunt: 2
+        Slash: 2.5
+  - type: ItemToggleWieldDamage
+    activatedDamage:
+      types:
+        Heat: 10
+        Slash: 10
+        Structural: 80
+    deactivatedDamage:
+      types:
+        Slash: 10
+        Structural: 40
+  - type: ComponentToggler
+    components:
+    - type: IgniteOnMeleeHit
+      fireStacks: 5 #Goobchange
   - type: Sprite
     sprite: Objects/Weapons/Melee/fireaxeflaming.rsi
     state: icon

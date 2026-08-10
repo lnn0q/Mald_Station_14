@@ -183,10 +183,21 @@
   name: space ninja shoes
   description: A pair of nano-enhanced boots with built-in magnetic suction cups.
   components:
+  - type: Tag
+    tags:
+    - WhitelistChameleon
   - type: Sprite
     sprite: Clothing/Shoes/Specific/spaceninja.rsi
   - type: Clothing
     sprite: Clothing/Shoes/Specific/spaceninja.rsi
+  - type: ChameleonClothing
+    slot: [FEET]
+    default: ClothingShoesSpaceNinja
+    affectedByEmp: false
+  - type: UserInterface
+    interfaces:
+      enum.ChameleonUiKey.Key:
+        type: ChameleonBoundUserInterface
   - type: NoSlip
   - type: Magboots # always have gravity because le suction cups
   - type: ClothingSpeedModifier

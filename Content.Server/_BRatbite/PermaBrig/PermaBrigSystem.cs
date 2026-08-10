@@ -19,6 +19,9 @@ using Content.Shared.Roles.Jobs;
 using Content.Shared.Security.Components;
 using Content.Shared._BRatbite.PermaBrig;
 using Content.Server.Traits;
+using Content.Shared.Cuffs;
+using Content.Shared.Cuffs.Components;
+using Content.Shared.Hands.EntitySystems;
 using Robust.Server.Audio;
 using Robust.Server.Player;
 using Robust.Shared.Audio;
@@ -27,6 +30,7 @@ using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Utility;
+using Content.Server._BRatbite.CryoSickness;
 
 namespace Content.Server._BRatbite.PermaBrig;
 
@@ -53,6 +57,9 @@ public sealed class PermaBrigSystem : GameRuleSystem<PermaBrigComponent>
     [Dependency] private readonly EntityManager _ent = default!;
     [Dependency] private readonly InventorySystem _inventory = default!;
     [Dependency] private readonly TraitSystem _trait = default!;
+    [Dependency] private readonly CryoSicknessSystem _cryoSicknessSystem = default!;
+    [Dependency] private readonly SharedCuffableSystem _cuffableSystem = default!;
+    [Dependency] private readonly SharedHandsSystem _hands = default!;
 
     public HashSet<ICommonSession> PermaIndividuals = new();
     public Dictionary<ICommonSession, (TimeSpan, TimeSpan)> PermaIndividualJoinedTime = new();
@@ -94,7 +101,7 @@ public sealed class PermaBrigSystem : GameRuleSystem<PermaBrigComponent>
             pool.Remove(player);
             GameTicker.PlayerJoinGame(player);
 
-            SpawnPrisonerPlayer(player);
+            SpawnPrisonerPlayer(player, _permaBrigManager.GetBrigInpatient(player.UserId));
 
             _sawmill.Info($"Player sent to perma: {player}");
         }
@@ -114,14 +121,14 @@ public sealed class PermaBrigSystem : GameRuleSystem<PermaBrigComponent>
 
         PermaIndividuals.Add(ev.Player);
 
-        SpawnPrisonerPlayer(ev.Player);
+        SpawnPrisonerPlayer(ev.Player, _permaBrigManager.GetBrigInpatient(ev.Player.UserId));
 
         ev.Handled = true;
 
         _sawmill.Info($"Player sent to perma: {ev.Player}");
     }
 
-    private EntityCoordinates? GetSpawnLocation()
+    private EntityCoordinates? GetSpawnLocation(string jobId)
     {
         var points = EntityQueryEnumerator<SpawnPointComponent, TransformComponent>();
         var possiblePositions = new List<EntityCoordinates>();
@@ -129,7 +136,7 @@ public sealed class PermaBrigSystem : GameRuleSystem<PermaBrigComponent>
         while (points.MoveNext(out var uid, out var spawnPoint, out var xform))
         {
             if (spawnPoint.SpawnType == SpawnPointType.Job &&
-                (spawnPoint.Job == "Prisoner"))
+                spawnPoint.Job == jobId)
             {
                 possiblePositions.Add(xform.Coordinates);
             }
@@ -141,7 +148,7 @@ public sealed class PermaBrigSystem : GameRuleSystem<PermaBrigComponent>
         return _random.Pick(possiblePositions);
     }
 
-    private void SpawnPrisonerPlayer(ICommonSession player)
+    private void SpawnPrisonerPlayer(ICommonSession player, bool inpatient)
     {
         var stations = _ticker.GetSpawnableStations();
         _random.Shuffle(stations);
@@ -156,32 +163,53 @@ public sealed class PermaBrigSystem : GameRuleSystem<PermaBrigComponent>
         var newMind = _mind.CreateMind(data!.UserId, character.Name);
         _mind.SetUserId(newMind, data.UserId);
 
-        var jobPrototype = _prototypeManager.Index<JobPrototype>("Prisoner");
+        var jobId = "Prisoner";
+        if (inpatient)
+        {
+            jobId = _prototypeManager.HasIndex<JobPrototype>("SanitariumPatient")
+                ? "SanitariumPatient"
+                : "Prisoner";
+        }
 
         _playTimeTrackings.PlayerRolesChanged(player);
-
-        GetSpawnLocation();
 
         EntityCoordinates? spawnLoc = null;
         EntityUid? mobMaybe = null;
 
-        spawnLoc = GetSpawnLocation();
+        spawnLoc = GetSpawnLocation(jobId);
+
+        if (inpatient && jobId == "SanitariumPatient" && spawnLoc == null)
+        {
+            // If no sanitarium spawnpoint exists, use Prisoner spawn routing instead of station fallback.
+            jobId = "Prisoner";
+            spawnLoc = GetSpawnLocation(jobId);
+        }
+
+        var jobPrototype = _prototypeManager.Index<JobPrototype>(jobId);
 
         if (spawnLoc != null)
         {
             mobMaybe = _stationSpawning.SpawnPlayerMob(
                 spawnLoc.Value,
-                "Prisoner",
+            jobId,
                 character,
                 station);
         }
         else
         {
-            mobMaybe = _stationSpawning.SpawnPlayerCharacterOnStation(station, "Prisoner", character);
+            mobMaybe = _stationSpawning.SpawnPlayerCharacterOnStation(station, jobId, character);
         }
 
         DebugTools.AssertNotNull(mobMaybe);
         var mob = mobMaybe!.Value;
+
+        // Inpatients should always receive a straightjacket, regardless of spawn path.
+        if (inpatient)
+        {
+            var cuffs = _ent.SpawnEntity("ClothingOuterStraightjacket", Transform(mob).Coordinates);
+            var comp = EnsureComp<CuffableComponent>(mob);
+            _cuffableSystem.TryAddNewCuffs(mob, mob, cuffs, comp);
+        }
 
         var brigTime = _permaBrigManager.GetBrigTime(player.UserId);
         var expireTime = TimeSpan.FromMinutes(brigTime) + Timing.CurTime;
@@ -206,7 +234,7 @@ public sealed class PermaBrigSystem : GameRuleSystem<PermaBrigComponent>
         _mind.TransferTo(newMind, mob);
         _admin.UpdatePlayerList(player);
 
-        _roles.MindAddJobRole(newMind, silent: false, jobPrototype: "Prisoner");
+        _roles.MindAddJobRole(newMind, silent: false, jobPrototype: jobId);
 
         var briefing = Loc.GetString("perma-prisoner-briefing",
             ("minutes", brigTime));
@@ -225,7 +253,7 @@ public sealed class PermaBrigSystem : GameRuleSystem<PermaBrigComponent>
 
         var aev = new PlayerSpawnCompleteEvent(mob,
             player,
-            "Prisoner",
+            jobId,
             false,
             true,
             0,
@@ -233,7 +261,8 @@ public sealed class PermaBrigSystem : GameRuleSystem<PermaBrigComponent>
             character);
 
         _stationRecords.OnPlayerSpawn(aev);
-        _trait.OnPlayerSpawnComplete(aev);
+        _trait.ApplyTraits(mob, character);
+        _cryoSicknessSystem.ApplyComponent(mob);
     }
 
     // private void OnRoundEnd(RoundEndMessageEvent ev) Auto decrease of perma sentence not yet implemented

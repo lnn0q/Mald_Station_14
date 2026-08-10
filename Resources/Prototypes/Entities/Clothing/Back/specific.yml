@@ -25,12 +25,35 @@
   suffix: Chameleon
   components:
   - type: Tag
-    tags: [] # ignore "WhitelistChameleon" tag
+    tags: []
   - type: Sprite
     sprite: Clothing/Back/Backpacks/backpack.rsi
   - type: ChameleonClothing
     slot: [back]
     default: ClothingBackpack
+  - type: UserInterface
+    interfaces:
+      enum.StorageUiKey.Key:
+        type: StorageBoundUserInterface
+      enum.ChameleonUiKey.Key:
+        type: ChameleonBoundUserInterface
+  - type: HideContrabandContent
+
+- type: entity
+  parent: ClothingBackpackSatchel
+  id: ClothingBackpackSatchelChameleonNinja
+  name: satchel
+  description: A trendy looking satchel.
+  suffix: Chameleon, Ninja
+  components:
+  - type: Tag
+    tags: [] # ignore "WhitelistChameleon" tag
+  - type: Sprite
+    sprite: Clothing/Back/Satchels/satchel.rsi
+  - type: ChameleonClothing
+    slot: [back]
+    default: ClothingBackpackSatchel
+    affectedByEmp: false
   - type: UserInterface
     interfaces:
       enum.StorageUiKey.Key:

@@ -336,6 +336,7 @@ namespace Content.Client.Options.UI.Tabs
             {
                 AddButton(boundKey);
             }
+            AddButton(ContentKeyFunctions.ToggleHotbarActionLock);
 
             AddHeader("ui-options-header-shuttle");
             AddButton(ContentKeyFunctions.ShuttleStrafeUp);
