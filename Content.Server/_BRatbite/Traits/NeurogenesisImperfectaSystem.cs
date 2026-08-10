@@ -38,7 +38,6 @@ public sealed class NeurogenesisImperfectaSystem : EntitySystem
         {
             var brainComp = EnsureComp<NeurogenesisImperfectaBrainComponent>(brain.Owner);
             brainComp.OriginalBody ??= ent.Owner;
-            Dirty(brain.Owner, brainComp);
         }
     }
 
