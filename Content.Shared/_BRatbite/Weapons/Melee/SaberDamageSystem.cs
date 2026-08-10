@@ -39,7 +39,6 @@ public sealed class SaberDamageSystem : EntitySystem
             {
                 var remainingSentence = (ent.Comp.PermaBrigSentenceExpireTime - _gameTiming.CurTime).TotalMinutes;
                 args.Damage += (hosSaber.DamageMultiplierPerMinute * (float) Math.Max(remainingSentence, 0) * args.Damage);
-                args.SkipCap = true;
             }
         }
     }
