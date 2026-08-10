@@ -31,15 +31,9 @@ public sealed class PermaUplinkSystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<PrisonerComponent, ComponentStartup>(OnPrisonerStartup);
         SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnPlayerSpawnComplete);
         SubscribeLocalEvent<PermaUplinkComponent, ComponentShutdown>(OnUplinkShutdown);
         SubscribeLocalEvent<PermaUplinkComponent, OpenPermaUplinkEvent>(OnOpenUplink);
-    }
-
-    private void OnPrisonerStartup(Entity<PrisonerComponent> ent, ref ComponentStartup args)
-    {
-        EnsurePermaUplink(ent);
     }
 
     private void OnPlayerSpawnComplete(PlayerSpawnCompleteEvent args)

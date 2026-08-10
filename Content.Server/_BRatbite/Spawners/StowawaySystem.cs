@@ -1,14 +1,9 @@
 using Content.Server.Shuttles.Systems;
 using Content.Server.Station.Systems;
 using Content.Server.Storage.Components;
-using Content.Shared._BRatbite.PermaBrig;
-using Content.Shared.Cuffs;
-using Content.Shared.Damage;
-using Content.Shared.Damage.Prototypes;
 using Content.Shared.Inventory;
 using Robust.Server.Containers;
 using Robust.Shared.Containers;
-using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 
 namespace Content.Server._BRatbite.Spawners;
@@ -21,9 +16,6 @@ public sealed partial class StowawaySystem : EntitySystem
     [Dependency] private readonly StationSpawningSystem _stationSpawning = default!;
     [Dependency] private readonly ILogManager _logManager = default!;
     [Dependency] private readonly InventorySystem _inventorySystem = default!;
-    [Dependency] private readonly SharedCuffableSystem _cuffableSystem = default!;
-    [Dependency] private readonly DamageableSystem _damageableSystem = default!;
-    [Dependency] private readonly IPrototypeManager _proto = default!;
     private ISawmill _sawmill = default!;
 
     public override void Initialize()
@@ -79,7 +71,6 @@ public sealed partial class StowawaySystem : EntitySystem
 
     private void OnStowawayInit(Entity<StowawayComponent> ent, ref MapInitEvent args)
     {
-        if (HasComp<PrisonerComponent>(ent)) HandlePrisonerStowaway(ent);
         if (!TryComp<InventoryComponent>(ent, out var inventoryComp))
             return;
         foreach (var slot in inventoryComp.Slots)
@@ -89,14 +80,5 @@ public sealed partial class StowawaySystem : EntitySystem
             Del(removedItem);
         }
 
-    }
-    private ProtoId<DamageGroupPrototype> _prisonerDamage = "Brute";
-    private void HandlePrisonerStowaway(Entity<StowawayComponent> ent)
-    {
-        var cuffs = SpawnNextToOrDrop("HardZipties", ent);
-        // Since prisoners can't be stowed away in lockers, they are cuffed and beat up
-        // Since sec forgot about them
-        _cuffableSystem.TryAddNewCuffs(ent, ent, cuffs);
-        _damageableSystem.TryChangeDamage(ent, new DamageSpecifier(_proto.Index(_prisonerDamage), 90));
     }
 }

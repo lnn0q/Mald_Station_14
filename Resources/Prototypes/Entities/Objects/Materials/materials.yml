@@ -690,7 +690,6 @@
     heldPrefix: bananium
   - type: RadiationSource # Goobstation - ITS BACK
     intensity: 0.1
-  - type: BananiumRadiationSource
 
 - type: entity
   parent: MaterialBananium
