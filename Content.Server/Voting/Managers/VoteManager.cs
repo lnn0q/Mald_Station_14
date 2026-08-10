@@ -147,36 +147,18 @@ namespace Content.Server.Voting.Managers
             if (!IsValidOption(v, option))
                 throw new ArgumentOutOfRangeException(nameof(option), "Invalid vote option ID");
 
-            if (!v.CastVotes.ContainsKey(player))
-                v.CastVotes.Add(player, new());
-            var options = v.CastVotes[player];
-            DebugTools.Assert(v.AllowMultiple || options.Count <= 1);
-            if (!v.AllowMultiple && options.FirstOrNull() is { } existingOption)
+            if (v.CastVotes.TryGetValue(player, out var existingOption))
             {
                 v.Entries[existingOption].Votes -= 1;
-                options.Clear();
             }
 
-            if (option is { } opt)
+            if (option != null)
             {
-                if (!options.Contains(opt))
-                {
-                    v.Entries[opt].Votes += 1;
-                    options.Add(opt);
-                }
-                else
-                {
-                    v.Entries[opt].Votes -= 1;
-                    options.Remove(opt);
-                }
+                v.Entries[option.Value].Votes += 1;
+                v.CastVotes[player] = option.Value;
             }
-
-            if (option is null || options.Count == 0)
+            else
             {
-                foreach (var vote in options)
-                {
-                    v.Entries[vote].Votes -= 1;
-                }
                 v.CastVotes.Remove(player);
             }
 
@@ -262,7 +244,7 @@ namespace Content.Server.Voting.Managers
             var start = _timing.RealTime;
             var end = start + options.Duration;
             var reg = new VoteReg(id, entries, options.Title, options.InitiatorText,
-                  options.InitiatorPlayer, start, end, options.VoterEligibility, options.DisplayVotes, options.TargetEntity, options.AllowMultiple);
+                options.InitiatorPlayer, start, end, options.VoterEligibility, options.DisplayVotes, options.TargetEntity);
 
             var handle = new VoteHandle(this, reg);
 
@@ -297,7 +279,6 @@ namespace Content.Server.Voting.Managers
 
             msg.VoteId = v.Id;
             msg.VoteActive = !v.Finished;
-            msg.AllowMultiple = v.AllowMultiple;
 
             if (!CheckVoterEligibility(player, v.VoterEligibility))
             {
@@ -325,10 +306,10 @@ namespace Content.Server.Voting.Managers
                 // Otherwise there would be a reconciliation b*g causing the UI to jump back and forth.
                 // (votes are not in simulation so can't use normal prediction/reconciliation sadly).
                 var dirty = v.VotesDirty.Contains(player);
-                msg.YourVotes = null;
+                msg.IsYourVoteDirty = dirty;
                 if (dirty)
                 {
-                    msg.YourVotes = cast.Select(v => (byte) v).ToArray();
+                    msg.YourVote = (byte) cast;
                 }
             }
 
@@ -439,10 +420,7 @@ namespace Content.Server.Voting.Managers
             {
                 if (!CheckVoterEligibility(playerVote.Key, v.VoterEligibility))
                 {
-                    foreach (var vote in playerVote.Value)
-                    {
-                        v.Entries[vote].Votes -= 1;
-                    }
+                    v.Entries[playerVote.Value].Votes -= 1;
                     v.CastVotes.Remove(playerVote.Key);
                 }
             }
@@ -456,7 +434,7 @@ namespace Content.Server.Voting.Managers
                 .ToImmutableArray();
             // Store all votes in order for webhooks
             var voteTally = new List<int>();
-            foreach (var entry in v.Entries)
+            foreach(var entry in v.Entries)
             {
                 voteTally.Add(entry.Votes);
             }
@@ -557,7 +535,7 @@ namespace Content.Server.Voting.Managers
         private sealed class VoteReg
         {
             public readonly int Id;
-            public readonly Dictionary<ICommonSession, List<int>> CastVotes = new();
+            public readonly Dictionary<ICommonSession, int> CastVotes = new();
             public readonly VoteEntry[] Entries;
             public readonly string Title;
             public readonly string InitiatorText;
@@ -567,7 +545,6 @@ namespace Content.Server.Voting.Managers
             public readonly VoterEligibility VoterEligibility;
             public readonly bool DisplayVotes;
             public readonly NetEntity? TargetEntity;
-            public readonly bool AllowMultiple;
 
             public bool Cancelled;
             public bool Finished;
@@ -578,7 +555,7 @@ namespace Content.Server.Voting.Managers
             public ICommonSession? Initiator { get; }
 
             public VoteReg(int id, VoteEntry[] entries, string title, string initiatorText,
-               ICommonSession? initiator, TimeSpan start, TimeSpan end, VoterEligibility voterEligibility, bool displayVotes, NetEntity? targetEntity, bool allowMultiple = true)
+                ICommonSession? initiator, TimeSpan start, TimeSpan end, VoterEligibility voterEligibility, bool displayVotes, NetEntity? targetEntity)
             {
                 Id = id;
                 Entries = entries;
@@ -590,7 +567,6 @@ namespace Content.Server.Voting.Managers
                 VoterEligibility = voterEligibility;
                 DisplayVotes = displayVotes;
                 TargetEntity = targetEntity;
-                AllowMultiple = allowMultiple;
             }
         }
 
@@ -599,15 +575,12 @@ namespace Content.Server.Voting.Managers
             public object Data;
             public string Text;
             public int Votes;
-            // Ratbite: Allow multiple votes
-            public bool AllowMultiple;
 
-            public VoteEntry(object data, string text, bool allowMultiple = true)
+            public VoteEntry(object data, string text)
             {
                 Data = data;
                 Text = text;
                 Votes = 0;
-                AllowMultiple = allowMultiple;
             }
         }
 
@@ -634,7 +607,7 @@ namespace Content.Server.Voting.Managers
             public string InitiatorText => _reg.InitiatorText;
             public bool Finished => _reg.Finished;
             public bool Cancelled => _reg.Cancelled;
-            public IReadOnlyDictionary<ICommonSession, List<int>> CastVotes => _reg.CastVotes;
+            public IReadOnlyDictionary<ICommonSession, int> CastVotes => _reg.CastVotes;
 
             public IReadOnlyDictionary<object, int> VotesPerOption { get; }
 

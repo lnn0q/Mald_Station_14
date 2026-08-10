@@ -55,7 +55,7 @@ namespace Content.Server.Voting
         /// <summary>
         /// Dictionary of votes cast by players, matching the option's id.
         /// </summary>
-        IReadOnlyDictionary<ICommonSession, List<int>> CastVotes { get; }
+        IReadOnlyDictionary<ICommonSession, int> CastVotes { get; }
 
         /// <summary>
         /// Current count of votes per option type.

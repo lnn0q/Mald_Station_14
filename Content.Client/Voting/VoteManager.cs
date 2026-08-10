@@ -166,8 +166,7 @@ namespace Content.Client.Voting
                 {
                     Entries = message.Options
                         .Select(c => new VoteEntry(c.name))
-                        .ToArray(),
-                    AllowMultiple = message.AllowMultiple,
+                        .ToArray()
                 };
 
                 existingVote = vote;
@@ -188,8 +187,8 @@ namespace Content.Client.Voting
             }
 
             // Update vote data from incoming.
-            if (message.AreYourVotesDirty)
-                existingVote.OurVotes = message.YourVotes!.Select(s => (int) s).ToList();
+            if (message.IsYourVoteDirty)
+                existingVote.OurVote = message.YourVote;
             // On the server, most of these params can't change.
             // It can't hurt to just re-set this stuff since I'm lazy and the server is sending it anyways, so...
             existingVote.Initiator = message.VoteInitiator;
@@ -244,14 +243,7 @@ namespace Content.Client.Voting
             var data = _votes[voteId];
             // Update immediately to avoid any funny reconciliation bugs.
             // See also code in server side to avoid bulldozing this.
-            if (!data.OurVotes.Contains(option))
-            {
-                data.OurVotes.Add(option);
-            }
-            else
-            {
-                data.OurVotes.Remove(option);
-            }
+            data.OurVote = option;
             _console.LocalShell.RemoteExecuteCommand($"vote {voteId} {option}");
         }
 
@@ -264,11 +256,10 @@ namespace Content.Client.Voting
             public TimeSpan EndTime;
             public string Title = "";
             public string Initiator = "";
-            public List<int> OurVotes = new();
+            public int? OurVote;
             public int Id;
             public bool DisplayVotes;
             public int? TargetEntity; // NetEntity
-            public bool AllowMultiple;
             public ActiveVote(int voteId)
             {
                 Id = voteId;
