@@ -8,9 +8,7 @@ using Content.Shared.Mind;
 using Content.Shared.Mind.Components;
 using Content.Shared.Popups;
 using Content.Shared.StatusEffectNew;
-using Content.Shared.Tag;
 using Robust.Shared.Player;
-using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 
 namespace Content.Shared._BRatbite.CryoSickness;
@@ -21,12 +19,6 @@ public abstract class SharedCryoSicknessSystem : EntitySystem
     [Dependency] private readonly SharedActionsSystem _actions = default!;
     [Dependency] private readonly StatusEffectsSystem _statusEffectsSystem = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly TagSystem _tagSystem = default!;
-
-    // Tag to mark entities who have had cryo sickness at some point.
-    // Entities with this tag cannot be attacked by people who are
-    // pacified by cryosickness.
-    private readonly ProtoId<TagPrototype> _cryoSicknessTag = "CryoSickness";
     [Dependency] private readonly ISharedAdminLogManager _adminLog = default!; // Ratbite: add logs when drawing implants
     public override void Initialize()
     {
@@ -38,7 +30,6 @@ public abstract class SharedCryoSicknessSystem : EntitySystem
         SubscribeLocalEvent<CryoSicknessComponent, MindAddedMessage>(OnPlayerAttach);
         SubscribeLocalEvent<CryoSicknessComponent, PlayerAttachedEvent>(OnPlayerAttach);
         SubscribeLocalEvent<CryoSicknessComponent, ShakeAwakeEvent>(OnShakeAwake);
-        SubscribeLocalEvent<CryoSicknessComponent, BeforePacifiedAttackEvent>(OnBeforePacifiedAttack);
         SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnPlayerSpawn);
     }
 
@@ -62,7 +53,6 @@ public abstract class SharedCryoSicknessSystem : EntitySystem
             _statusEffectsSystem.TryAddStatusEffectDuration(ent.Owner, ent.Comp.Effect, duration);
         EnsureComp<PacifiedComponent>(ent);
         _actions.AddAction(ent.Owner, ref ent.Comp.ActionEntity, ent.Comp.Action);
-        _tagSystem.AddTag(ent, _cryoSicknessTag);
     }
 
     private void OnShutdown(Entity<CryoSicknessComponent> ent, ref ComponentShutdown args)
@@ -73,7 +63,7 @@ public abstract class SharedCryoSicknessSystem : EntitySystem
             _statusEffectsSystem.TryRemoveStatusEffect(ent.Owner, ent.Comp.Effect);
             RemComp<PacifiedComponent>(ent);
         }
-        _popup.PopupClient(Loc.GetString("cryosickness-end-popup"), ent.Owner, ent.Owner);
+        _popup.PopupEntity(Loc.GetString("cryosickness-end-popup"), ent.Owner, ent.Owner);
         _actions.RemoveAction(ent.Owner, ent.Comp.ActionEntity);
     }
 
@@ -89,46 +79,23 @@ public abstract class SharedCryoSicknessSystem : EntitySystem
 
     private void OnDamageChange(Entity<CryoSicknessComponent> ent, ref DamageChangedEvent args)
     {
-        // skip prediction as it makes some weird desyncs
-        if (_timing.InPrediction) return;
-        // Ignore if they are damaging themselves
-        if (args.Origin == ent.Owner) return;
         // Ignore healing
         if (!args.DamageIncreased) return;
-        if ((args.DamageDelta?.GetTotal() ?? 0) < ent.Comp.MinDamageBeforeRemove && args.Damageable.Damage.GetTotal() < ent.Comp.MinTotalDamageBeforeRemove) return;
         if (!ent.Comp.HadPacifism)
         {
             _statusEffectsSystem.TryRemoveStatusEffect(ent.Owner, ent.Comp.Effect);
-            if (RemComp<PacifiedComponent>(ent))
-            {
-                // I'm not completely sold if it should be removed
-                // when people take damage, I am opting to make it
-                // like this to prevent people from intentionally take
-                // damage instead of shaking themselves off
-                // specifically so they can't get attacked by pacified
-                // people.  Self inflicted damage doesn't count, but
-                // there are other ways to take damage like spacing
-                // yourself.
-                _tagSystem.RemoveTag(ent, _cryoSicknessTag);
-                _popup.PopupEntity(Loc.GetString("cryosickness-resistance-popup"), ent.Owner, ent.Owner);
-            }
+            RemComp<PacifiedComponent>(ent);
         }
         var newTime = _timing.CurTime + TimeSpan.FromSeconds(ent.Comp.ExpireSecondsAfterDamage);
         if (newTime < ent.Comp.ExpireTime)
-        {
             ent.Comp.ExpireTime = newTime;
-
-        }
-
         if (args.Origin is null) return;
         _adminLog.Add(LogType.Action, LogImpact.Extreme, $"{ToPrettyString(args.Origin.Value):player} attacked {ToPrettyString(ent):player}, who still had cryo sickness");
-
     }
 
     public void ApplyComponent(EntityUid ent)
     {
         EnsureComp<CryoSicknessComponent>(ent);
-
     }
 
     private void OnPlayerSpawn(PlayerSpawnCompleteEvent args)
@@ -138,24 +105,7 @@ public abstract class SharedCryoSicknessSystem : EntitySystem
 
     private void OnShakeAwake(Entity<CryoSicknessComponent> ent, ref ShakeAwakeEvent args)
     {
-
-        // If you manually shake awake, you don't deserve protection
-        _tagSystem.RemoveTag(ent, _cryoSicknessTag);
-
         _adminLog.Add(LogType.Action, LogImpact.Extreme, $"{ToPrettyString(ent):player} shook themselves off cryo sickness.");
-
         RemComp<CryoSicknessComponent>(ent);
-    }
-
-    private void OnBeforePacifiedAttack(Entity<CryoSicknessComponent> ent, ref BeforePacifiedAttackEvent args)
-    {
-        if (ent.Comp.HadPacifism) return;
-        if (args.Target is not { } target) return;
-        // Allow entities to attack other entities that have never had cryo sickness (e.g. rats, etc)
-        if (!_tagSystem.HasTag(target, _cryoSicknessTag))
-        {
-            args.Cancel();
-            return;
-        }
     }
 }
