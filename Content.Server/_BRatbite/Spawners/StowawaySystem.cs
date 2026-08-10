@@ -82,10 +82,10 @@ public sealed partial class StowawaySystem : EntitySystem
         if (HasComp<PrisonerComponent>(ent)) HandlePrisonerStowaway(ent);
         if (!TryComp<InventoryComponent>(ent, out var inventoryComp))
             return;
-        var slotsToRemove = _inventorySystem.GetSlotEnumerator(ent.Owner, ent.Comp.SlotsToRemove);
-        while (slotsToRemove.MoveNext(out var slot))
+        foreach (var slot in inventoryComp.Slots)
         {
-            if (!_inventorySystem.TryUnequip(ent, slot.ID, out var removedItem, force: true, silent: true)) continue;
+            if (!_random.Prob(ent.Comp.SlotDeletionChance)) continue;
+            if (!_inventorySystem.TryUnequip(ent, slot.Name, out var removedItem, force: true, silent: true)) continue;
             Del(removedItem);
         }
 
