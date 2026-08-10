@@ -255,9 +255,9 @@ public sealed partial class MarkingSet
     {
         IoCManager.Resolve(ref markingManager);
 
+        var toRemove = new List<int>();
         foreach (var (category, list) in Markings)
         {
-            var toRemove = new List<int>();
             for (var i = 0; i < list.Count; i++)
             {
                 if (!markingManager.TryGetMarking(list[i], out var marking))
@@ -266,19 +266,15 @@ public sealed partial class MarkingSet
                     continue;
                 }
 
-                if (marking.ColorSlotCount != list[i].MarkingColors.Count)
+                if (marking.Sprites.Count != list[i].MarkingColors.Count)
                 {
-                    list[i] = new Marking(marking.ID, marking.GetColorSlotColors(list[i].MarkingColors))
-                    {
-                        Forced = list[i].Forced,
-                        Visible = list[i].Visible,
-                    };
+                    list[i] = new Marking(marking.ID, marking.Sprites.Count);
                 }
             }
 
-            for (var i = toRemove.Count - 1; i >= 0; i--)
+            foreach (var i in toRemove)
             {
-                Remove(category, toRemove[i]);
+                Remove(category, i);
             }
         }
     }
@@ -301,18 +297,11 @@ public sealed partial class MarkingSet
                 continue;
             }
 
-            var index = 0;
+            var index = Markings.TryGetValue(category, out var markings) ? markings.Count : 0;
+
             while (points.Points > 0 && index < points.DefaultMarkings.Count)
             {
-                var defaultMarking = points.DefaultMarkings[index];
-                if (Markings.TryGetValue(category, out var markings) &&
-                    markings.Any(marking => marking.MarkingId == defaultMarking))
-                {
-                    index++;
-                    continue;
-                }
-
-                if (markingManager.Markings.TryGetValue(defaultMarking, out var prototype))
+                if (markingManager.Markings.TryGetValue(points.DefaultMarkings[index], out var prototype))
                 {
                     var colors = MarkingColoring.GetMarkingLayerColors(
                             prototype,
@@ -320,7 +309,7 @@ public sealed partial class MarkingSet
                             eyeColor,
                             this
                         );
-                    var marking = new Marking(defaultMarking, colors);
+                    var marking = new Marking(points.DefaultMarkings[index], colors);
 
                     AddBack(category, marking);
                 }

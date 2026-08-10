@@ -612,7 +612,7 @@ public abstract class SharedHumanoidAppearanceSystem : EntitySystem
         markingObject.Forced = forced;
         if (color != null)
         {
-            for (var i = 0; i < prototype.ColorSlotCount; i++)
+            for (var i = 0; i < prototype.Sprites.Count; i++)
             {
                 markingObject.SetColor(i, color.Value);
             }
@@ -650,7 +650,7 @@ public abstract class SharedHumanoidAppearanceSystem : EntitySystem
             return;
         }
 
-        var markingObject = new Marking(marking, prototype.GetColorSlotColors(colors));
+        var markingObject = new Marking(marking, colors);
         markingObject.Forced = forced;
         humanoid.MarkingSet.AddBack(prototype.MarkingCategory, markingObject);
 

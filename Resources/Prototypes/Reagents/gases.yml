@@ -67,10 +67,6 @@
         conditions:
         - !type:OrganType
           type: Feroxi
-      - !type:Oxygenate # Far Horizons - Protogens still require oxygen.
-        conditions:
-        - !type:OrganType
-          type: Protogen
       # Convert Oxygen into CO2.
       - !type:ModifyLungGas
         conditions:
@@ -138,10 +134,6 @@
         conditions:
         - !type:OrganType
           type: Feroxi
-      - !type:Oxygenate # Far Horizons - Protogens still require oxygen.
-        conditions:
-        - !type:OrganType
-          type: Protogen
       # Convert Oxygen into CO2.
       - !type:ModifyLungGas
         conditions:

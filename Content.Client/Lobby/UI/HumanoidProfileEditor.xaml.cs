@@ -253,8 +253,6 @@ namespace Content.Client.Lobby.UI
         public HumanoidCharacterProfile? Profile;
 
         private List<SpeciesPrototype> _species = new();
-        private List<SpeciesPrototype> _subspecies = new();
-        private bool _updatingSubspecies;
 
         private List<(string, RequirementsSelector)> _jobPriorities = new();
 
@@ -402,17 +400,8 @@ namespace Content.Client.Lobby.UI
                 SpeciesButton.SelectId(args.Id);
                 SetSpecies(_species[args.Id].ID);
                 UpdateHairPickers();
+                OnSkinColorOnValueChanged();
                 UpdateHeightWidthSliders(); // Goobstation: port EE height/width sliders
-            };
-
-            SubspeciesButton.OnItemSelected += args =>
-            {
-                if (_updatingSubspecies)
-                    return;
-
-                SubspeciesButton.SelectId(args.Id);
-                SetSpecies(_subspecies[args.Id].ID);
-                UpdateHairPickers();
             };
 
             // begin Goobstation: port EE height/width sliders
@@ -1152,19 +1141,14 @@ namespace Content.Client.Lobby.UI
             _species.Clear();
 
             _species.AddRange(_prototypeManager.EnumeratePrototypes<SpeciesPrototype>().Where(o => o.RoundStart));
-            _species.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.CurrentCultureIgnoreCase));
             var speciesIds = _species.Select(o => o.ID).ToList();
 
             for (var i = 0; i < _species.Count; i++)
             {
-                if (_species[i].SubspeciesOf != null)
-                    continue;
-
                 var name = Loc.GetString(_species[i].Name);
                 SpeciesButton.AddItem(name, i);
 
-                if (Profile?.Species.Equals(_species[i].ID) == true ||
-                    _species.Find(p => p.ID == Profile?.Species)?.SubspeciesOf == _species[i].ID)
+                if (Profile?.Species.Equals(_species[i].ID) == true)
                 {
                     SpeciesButton.SelectId(i);
                 }
@@ -1173,76 +1157,10 @@ namespace Content.Client.Lobby.UI
             // If our species isn't available then reset it to default.
             if (Profile != null)
             {
-                var parentSpecies = _species.Find(p => p.ID == Profile.Species)?.SubspeciesOf ?? Profile.Species;
-                if (!speciesIds.Contains(parentSpecies))
+                if (!speciesIds.Contains(Profile.Species))
                 {
                     SetSpecies(SharedHumanoidAppearanceSystem.DefaultSpecies);
                 }
-            }
-
-            UpdateSubspecies();
-        }
-
-        private void UpdateSubspecies()
-        {
-            CSubspecies.Visible = false;
-            _subspecies.Clear();
-            SubspeciesButton.Clear();
-
-            if (Profile == null || _species.Count == 0)
-                return;
-
-            var species = _species.Find(x => x.ID == Profile.Species) ?? _species.First();
-
-            if (!species.HasSubspecies && species.SubspeciesOf == null)
-                return;
-
-            var subspecies = new List<SpeciesPrototype>();
-            var selected = 0;
-
-            if (species.HasSubspecies)
-            {
-                var allSubspecies = _prototypeManager.EnumeratePrototypes<SpeciesPrototype>()
-                    .Where(p => p.RoundStart && p.SubspeciesOf == species.ID)
-                    .ToList();
-                allSubspecies.Sort((a, b) => string.Compare(a.SubspeciesName ?? a.Name, b.SubspeciesName ?? b.Name, StringComparison.OrdinalIgnoreCase));
-
-                subspecies.Add(species);
-                subspecies.AddRange(allSubspecies);
-            }
-            else if (species.SubspeciesOf != null)
-            {
-                var allSubspecies = _prototypeManager.EnumeratePrototypes<SpeciesPrototype>()
-                    .Where(p => p.RoundStart && p.SubspeciesOf == species.SubspeciesOf)
-                    .ToList();
-                allSubspecies.Sort((a, b) => string.Compare(a.SubspeciesName ?? a.Name, b.SubspeciesName ?? b.Name, StringComparison.OrdinalIgnoreCase));
-
-                var parent = _prototypeManager.Index(species.SubspeciesOf);
-                subspecies.Add(parent);
-                subspecies.AddRange(allSubspecies);
-                selected = subspecies.IndexOf(species);
-            }
-
-            if (subspecies.Count == 0)
-                return;
-
-            for (var i = 0; i < subspecies.Count; i++)
-            {
-                _subspecies.Add(subspecies[i]);
-
-                var name = Loc.GetString(subspecies[i].SubspeciesName ?? subspecies[i].Name);
-                SubspeciesButton.AddItem(name, i);
-            }
-
-            _updatingSubspecies = true;
-            try
-            {
-                SubspeciesButton.SelectId(selected);
-                CSubspecies.Visible = true;
-            }
-            finally
-            {
-                _updatingSubspecies = false;
             }
         }
 
@@ -1389,7 +1307,6 @@ namespace Content.Client.Lobby.UI
             UpdateCMarkingsFacialHair();
             UpdateHeightWidthSliders(); // Goobstation: port EE height/width sliders
             UpdateWeight(); // Goobstation: port EE height/width sliders
-            UpdateSpeciesLoadout();
 
             RefreshAntags();
             RefreshJobs();
@@ -1705,7 +1622,7 @@ namespace Content.Client.Lobby.UI
             ReloadProfilePreview();
         }
 
-        private void OnSkinColorOnValueChanged(bool reloadPreview = true)
+        private void OnSkinColorOnValueChanged()
         {
             if (Profile is null) return;
 
@@ -1799,8 +1716,7 @@ namespace Content.Client.Lobby.UI
                 // Goobstation Section End - Tajaran
             }
 
-            if (reloadPreview)
-                ReloadProfilePreview();
+            ReloadProfilePreview();
         }
 
         protected override void Dispose(bool disposing)
@@ -1862,48 +1778,14 @@ namespace Content.Client.Lobby.UI
 
         private void SetSpecies(string newSpecies)
         {
-            if (Profile == null)
-                return;
-
-            var oldSpecies = Profile.Species;
-            var newSex = Profile.Sex;
-            var sexChanged = false;
-            if (_prototypeManager.TryIndex<SpeciesPrototype>(newSpecies, out var speciesProto) &&
-                !speciesProto.Sexes.Contains(newSex))
-            {
-                newSex = speciesProto.Sexes.Count > 0 ? speciesProto.Sexes[0] : Sex.Unsexed;
-                sexChanged = true;
-            }
-
-            Profile = Profile.WithSpecies(newSpecies).WithSex(newSex);
-            if (sexChanged)
-            {
-                Profile = newSex switch
-                {
-                    Sex.Male => Profile.WithGender(Gender.Male),
-                    Sex.Female => Profile.WithGender(Gender.Female),
-                    _ => Profile.WithGender(Gender.Epicene)
-                };
-            }
-
-            var appearance = Profile.Appearance;
-
-            if (IsSubspeciesFamilySwitch(oldSpecies, newSpecies))
-                appearance = appearance.WithMarkings(new List<Marking>());
-
-            Profile = Profile.WithCharacterAppearance(HumanoidCharacterAppearance.EnsureValid(appearance, newSpecies, Profile.Sex));
-            UpdateSubspecies();
-            UpdateSpeciesLoadout();
-            OnSkinColorOnValueChanged(false); // Species may have special color prefs, make sure to update it.
+            Profile = Profile?.WithSpecies(newSpecies);
+            OnSkinColorOnValueChanged(); // Species may have special color prefs, make sure to update it.
             Markings.SetSpecies(newSpecies); // Repopulate the markings tab as well.
-            Markings.SetSex(Profile.Sex);
-            UpdateMarkings();
             // In case there's job restrictions for the species
             RefreshJobs();
             // In case there's species restrictions for loadouts
             RefreshLoadouts();
             UpdateSexControls(); // update sex for new species
-            UpdateGenderControls();
             UpdateSpeciesGuidebookIcon();
             ReloadPreview();
             UpdateBarkVoice(); // Goob Station - Barks
@@ -1913,24 +1795,6 @@ namespace Content.Client.Lobby.UI
             UpdateWeight();
             // end Goobstation: port EE height/width sliders
             RefreshTraits(); // Goobstation: ported from DeltaV - Species trait exclusion
-        }
-
-        private bool IsSubspeciesFamilySwitch(string oldSpecies, string newSpecies)
-        {
-            if (oldSpecies == newSpecies)
-                return false;
-
-            if (!_prototypeManager.TryIndex<SpeciesPrototype>(oldSpecies, out var oldProto) ||
-                !_prototypeManager.TryIndex<SpeciesPrototype>(newSpecies, out var newProto))
-            {
-                return false;
-            }
-
-            var oldRoot = oldProto.SubspeciesOf ?? oldProto.ID;
-            var newRoot = newProto.SubspeciesOf ?? newProto.ID;
-
-            return oldRoot == newRoot && (oldProto.HasSubspecies || oldProto.SubspeciesOf != null ||
-                                          newProto.HasSubspecies || newProto.SubspeciesOf != null);
         }
 
         private void SetName(string newName)

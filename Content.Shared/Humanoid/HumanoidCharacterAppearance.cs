@@ -245,7 +245,6 @@ public sealed partial class HumanoidCharacterAppearance : ICharacterAppearance, 
 
             markingSet.EnsureSpecies(species, skinColor, markingManager);
             markingSet.EnsureSexes(sex, markingManager);
-            markingSet.EnsureDefault(skinColor, eyeColor, markingManager);
         }
 
         return new HumanoidCharacterAppearance(

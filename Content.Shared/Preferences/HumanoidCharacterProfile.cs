@@ -85,8 +85,6 @@ namespace Content.Shared.Preferences
     [Serializable, NetSerializable]
     public sealed partial class HumanoidCharacterProfile : ICharacterProfile
     {
-        public const string SpeciesLoadoutDatabaseKey = "__species_loadout";
-
         private static readonly Regex RestrictedNameRegex = new(@"[^A-Za-z0-9 '\-]");
         private static readonly Regex ICNameCaseRegex = new(@"^(?<word>\w)|\b(?<word>\w)(?=\w*$)");
 
@@ -120,9 +118,6 @@ namespace Content.Shared.Preferences
 
         [DataField]
         private Dictionary<string, RoleLoadout> _loadouts = new();
-
-        [DataField]
-        public RoleLoadout? SpeciesLoadout { get; private set; }
 
         [DataField]
         public string Name { get; set; } = "John Doe";
@@ -213,7 +208,6 @@ namespace Content.Shared.Preferences
             HashSet<ProtoId<AntagPrototype>> antagPreferences,
             HashSet<ProtoId<TraitPrototype>> traitPreferences,
             Dictionary<string, RoleLoadout> loadouts,
-            RoleLoadout? speciesLoadout,
             ProtoId<BarkPrototype> barkVoice) // Goob Station - Barks
         {
             Name = name;
@@ -231,7 +225,6 @@ namespace Content.Shared.Preferences
             _antagPreferences = antagPreferences;
             _traitPreferences = traitPreferences;
             _loadouts = loadouts;
-            SpeciesLoadout = speciesLoadout;
             BarkVoice = barkVoice; // Goob Station - Barks
 
             var hasHighPrority = false;
@@ -266,7 +259,6 @@ namespace Content.Shared.Preferences
                 new HashSet<ProtoId<AntagPrototype>>(other.AntagPreferences),
                 new HashSet<ProtoId<TraitPrototype>>(other.TraitPreferences),
                 new Dictionary<string, RoleLoadout>(other.Loadouts),
-                other.SpeciesLoadout?.Clone(),
                 other.BarkVoice) // Goob Station - Barks
         {
         }
@@ -289,22 +281,10 @@ namespace Content.Shared.Preferences
         {
             species ??= SharedHumanoidAppearanceSystem.DefaultSpecies;
 
-            var prototypeManager = IoCManager.Resolve<IPrototypeManager>();
-            var speciesProto = prototypeManager.Index<SpeciesPrototype>(species);
-
-            var profile = new HumanoidCharacterProfile()
+            return new()
             {
                 Species = species,
             };
-
-            RoleLoadout? speciesLoadout = null;
-            if (speciesProto.Loadout != null)
-            {
-                speciesLoadout = new RoleLoadout(speciesProto.Loadout.Value);
-                speciesLoadout.SetDefault(profile, null, prototypeManager);
-            }
-
-            return profile.WithSpeciesLoadout(speciesLoadout);
         }
 
         // TODO: This should eventually not be a visual change only.
@@ -364,7 +344,7 @@ namespace Content.Shared.Preferences
             var name = GetName(species, gender);
 
 
-            var profile = new HumanoidCharacterProfile()
+            return new HumanoidCharacterProfile()
             {
                 Name = name,
                 Sex = sex,
@@ -376,15 +356,6 @@ namespace Content.Shared.Preferences
                 Appearance = HumanoidCharacterAppearance.Random(species, sex),
                 BarkVoice = barkvoiceId, // Goob Station - Barks
             };
-
-            RoleLoadout? speciesLoadout = null;
-            if (speciesPrototype != null && speciesPrototype.Loadout != null)
-            {
-                speciesLoadout = new RoleLoadout(speciesPrototype.Loadout.Value);
-                speciesLoadout.SetDefault(profile, null, prototypeManager);
-            }
-
-            return profile.WithSpeciesLoadout(speciesLoadout);
         }
 
         public HumanoidCharacterProfile WithName(string name)
@@ -616,29 +587,8 @@ namespace Content.Shared.Preferences
             if (!_antagPreferences.SequenceEqual(other._antagPreferences)) return false;
             if (!_traitPreferences.SequenceEqual(other._traitPreferences)) return false;
             if (!Loadouts.SequenceEqual(other.Loadouts)) return false;
-            if (!SpeciesLoadoutEquals(SpeciesLoadout, other.SpeciesLoadout)) return false;
             if (FlavorText != other.FlavorText) return false;
             return Appearance.MemberwiseEquals(other.Appearance);
-        }
-
-        private static bool SpeciesLoadoutEquals(RoleLoadout? a, RoleLoadout? b)
-        {
-            if (a == null || b == null)
-                return a == b;
-
-            if (a.Role != b.Role || a.SelectedLoadouts.Count != b.SelectedLoadouts.Count)
-                return false;
-
-            foreach (var (group, loadouts) in a.SelectedLoadouts)
-            {
-                if (!b.SelectedLoadouts.TryGetValue(group, out var otherLoadouts) ||
-                    !loadouts.SequenceEqual(otherLoadouts))
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
 
         public void EnsureValid(ICommonSession session, IDependencyCollection collection)
@@ -651,9 +601,6 @@ namespace Content.Shared.Preferences
                 Species = SharedHumanoidAppearanceSystem.DefaultSpecies;
                 speciesPrototype = prototypeManager.Index(Species);
             }
-
-            if (speciesPrototype == null)
-                throw new InvalidOperationException($"Default species prototype {SharedHumanoidAppearanceSystem.DefaultSpecies} was not found.");
 
             var sex = Sex switch
             {
@@ -824,27 +771,6 @@ namespace Content.Shared.Preferences
             {
                 _loadouts.Remove(value);
             }
-
-            var speciesRoleLoadout = speciesPrototype!.Loadout;
-            if (speciesRoleLoadout == null)
-            {
-                SpeciesLoadout = null;
-            }
-            else
-            {
-                var speciesLoadout = SpeciesLoadout ?? new RoleLoadout(speciesRoleLoadout.Value);
-                SpeciesLoadout = speciesLoadout;
-                speciesLoadout.Role = speciesRoleLoadout.Value;
-
-                var speciesLoadoutProto = prototypeManager.Index(speciesLoadout.Role);
-                foreach (var group in speciesLoadout.SelectedLoadouts.Keys.ToArray())
-                {
-                    if (!speciesLoadoutProto.Groups.Contains(group))
-                        speciesLoadout.SelectedLoadouts.Remove(group);
-                }
-
-                speciesLoadout.SetDefault(this, session, prototypeManager);
-            }
         }
 
         /// <summary>
@@ -981,7 +907,6 @@ namespace Content.Shared.Preferences
             hashCode.Add(_antagPreferences);
             hashCode.Add(_traitPreferences);
             hashCode.Add(_loadouts);
-            hashCode.Add(SpeciesLoadout);
             hashCode.Add(Name);
             hashCode.Add(FlavorText);
             hashCode.Add(Species);
@@ -1019,35 +944,6 @@ namespace Content.Shared.Preferences
             var profile = Clone();
             profile._loadouts = copied;
             return profile;
-        }
-
-        public HumanoidCharacterProfile WithSpeciesLoadout(RoleLoadout? loadout)
-        {
-            var profile = Clone();
-            profile.SpeciesLoadout = loadout?.Clone();
-            return profile;
-        }
-
-        public RoleLoadout? GetSpeciesLoadoutOrDefault(ICommonSession? session, IPrototypeManager prototypeManager)
-        {
-            var species = prototypeManager.Index<SpeciesPrototype>(Species);
-            if (species.Loadout == null)
-            {
-                SpeciesLoadout = null;
-                return null;
-            }
-
-            if (SpeciesLoadout == null || SpeciesLoadout.Role != species.Loadout.Value)
-            {
-                SpeciesLoadout = new RoleLoadout(species.Loadout.Value);
-                SpeciesLoadout.SetDefault(this, session, prototypeManager, force: true);
-            }
-            else
-            {
-                SpeciesLoadout.SetDefault(this, session, prototypeManager);
-            }
-
-            return SpeciesLoadout;
         }
 
         public RoleLoadout GetLoadoutOrDefault(string id, ICommonSession? session, ProtoId<SpeciesPrototype>? species, IEntityManager entManager, IPrototypeManager protoManager)

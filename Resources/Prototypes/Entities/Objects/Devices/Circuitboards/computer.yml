@@ -79,7 +79,6 @@
     - type: Tag
       tags:
         - DroneUsable # Goobstation
-        - RamChip # Starlight/Far Horizons - Protogen diet
     - type: StaticPrice
       price: 100
     - type: PhysicalComposition #Goobstation - Recycle update

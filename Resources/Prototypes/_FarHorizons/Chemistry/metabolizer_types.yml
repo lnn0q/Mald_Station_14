@@ -1,7 +1,0 @@
-- type: metabolizerType
-  id: Protogen
-  name: metabolizer-type-protogen
-
-- type: metabolizerType
-  id: Avali
-  name: metabolizer-type-avali
