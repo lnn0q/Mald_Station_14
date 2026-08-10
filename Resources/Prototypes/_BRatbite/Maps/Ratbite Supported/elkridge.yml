@@ -50,7 +50,6 @@
             Paramedic: [ 1, 1 ]
             Psychologist: [ 1, 1 ] #ratbite
             MedOrderly: [ 1, 1 ] #ratbite
-            Psychologist: [ 1, 1 ]
             #science (3 - 4)
             Scientist: [ 3, 4 ]
             ResearchAssistant: [ 2, 2 ] #intern, not counted
