@@ -241,8 +241,6 @@
     - DoorBumpOpener
     - AnomalyHost
     - ReptilianEmotes
-  # Ratbite
-  - type: ThickSkin
 
 - type: entity
   parent: BaseSpeciesDummy
