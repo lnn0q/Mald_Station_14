@@ -72,8 +72,7 @@ public sealed class SolutionContainerVisualsSystem : VisualizerSystem<SolutionCo
         SolutionComponent? solutionComponent = null;
         if (component.InsertedItemSlotID != null)
         {
-            // Ratbite: Pass solution name to entity
-            GetSolutionFromEntity(uid, component.InsertedItemSlotID, component.SolutionName, out solutionComponent);
+            GetSolutionFromEntity(uid, component.InsertedItemSlotID, out solutionComponent);
             if (solutionComponent != null)
                 fraction = solutionComponent.Solution.FillFraction;
         }
@@ -191,7 +190,7 @@ public sealed class SolutionContainerVisualsSystem : VisualizerSystem<SolutionCo
     }
 
     // Goobstation start
-    private bool GetSolutionFromEntity(EntityUid containerUid, string insertedItemSlotID, string? solutionName, out SolutionComponent? solutionComponent)
+    private bool GetSolutionFromEntity(EntityUid containerUid, string insertedItemSlotID, out SolutionComponent? solutionComponent)
     {
         solutionComponent = null;
         var itemSlotsComponent = CompOrNull<ItemSlotsComponent>(containerUid);
@@ -202,8 +201,7 @@ public sealed class SolutionContainerVisualsSystem : VisualizerSystem<SolutionCo
         var insertedUid = slot.Item;  //Uid of item (beaker for example) inserted into machine 
 
         if (insertedUid == null ||
-            // Ratbite edit: No need to assume that it's a beaker
-            !_solutionContainers.TryGetSolution(insertedUid.Value, solutionName, out var solution) ||
+            !_solutionContainers.TryGetFitsInDispenser(insertedUid.Value, out var solution, out _) ||
             solution == null)
             return false;
 
