@@ -13,9 +13,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using Content.Server.Silicons.Laws;
-using Content.Server._FarHorizons.Silicons.Glitching;
 using Content.Server.StationEvents.Components;
-using Content.Shared._FarHorizons.Silicons.Glitching;
 using Content.Shared.GameTicking.Components;
 using Content.Shared.Silicons.Laws.Components;
 using Content.Shared.Station.Components;
@@ -25,7 +23,6 @@ namespace Content.Server.StationEvents.Events;
 public sealed class IonStormRule : StationEventSystem<IonStormRuleComponent>
 {
     [Dependency] private readonly IonStormSystem _ionStorm = default!;
-    [Dependency] private readonly GlitchingSystem _glitching = default!;
 
     protected override void Started(EntityUid uid, IonStormRuleComponent comp, GameRuleComponent gameRule, GameRuleStartedEvent args)
     {
@@ -42,15 +39,6 @@ public sealed class IonStormRule : StationEventSystem<IonStormRuleComponent>
                 continue;
 
             _ionStorm.IonStormTarget((ent, lawBound, target));
-        }
-
-        var glitchQuery = EntityQueryEnumerator<GlitchOnIonStormComponent, TransformComponent>();
-        while (glitchQuery.MoveNext(out var ent, out var glitch, out var xform))
-        {
-            if (CompOrNull<StationMemberComponent>(xform.GridUid)?.Station != chosenStation)
-                continue;
-
-            _glitching.TriggerIonStorm((ent, glitch));
         }
     }
 }

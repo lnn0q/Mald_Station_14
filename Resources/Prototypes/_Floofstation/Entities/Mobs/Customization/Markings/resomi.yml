@@ -9,7 +9,7 @@
   id: ResomiTail
   bodyPart: Tail    #Goob - was Chest
   markingCategory: Tail
-  speciesRestriction: [Resomi, ProtoResomi]
+  speciesRestriction: [Resomi]
   forcedColoring: true
   sprites:
   - sprite: _Floofstation/Mobs/Customization/resomi_parts.rsi
@@ -19,7 +19,7 @@
   id: ResomiTailFeathers
   bodyPart: Tail #Goob - was Chest
   markingCategory: Tail
-  speciesRestriction: [Resomi, ProtoResomi]
+  speciesRestriction: [Resomi]
   sprites:
   - sprite: _Floofstation/Mobs/Customization/resomi_parts.rsi
     state: tail_feathers
@@ -28,7 +28,7 @@
   id: ResomiLArmFeathers
   bodyPart: LHand
   markingCategory: LeftHand
-  speciesRestriction: [Resomi, ProtoResomi]
+  speciesRestriction: [Resomi]
   sprites:
   - sprite: _Floofstation/Mobs/Customization/resomi_parts.rsi
     state: l_hand_feathers
@@ -37,7 +37,7 @@
   id: ResomiLLegFeathers
   bodyPart: LFoot
   markingCategory: LeftFoot
-  speciesRestriction: [Resomi, ProtoResomi]
+  speciesRestriction: [Resomi]
   sprites:
   - sprite: _Floofstation/Mobs/Customization/resomi_parts.rsi
     state: l_foot_feathers
@@ -46,7 +46,7 @@
   id: ResomiRArmFeathers
   bodyPart: RHand
   markingCategory: RightHand
-  speciesRestriction: [Resomi, ProtoResomi]
+  speciesRestriction: [Resomi]
   sprites:
   - sprite: _Floofstation/Mobs/Customization/resomi_parts.rsi
     state: r_hand_feathers
@@ -55,7 +55,7 @@
   id: ResomiRLegFeathers
   bodyPart: RFoot
   markingCategory: RightFoot
-  speciesRestriction: [Resomi, ProtoResomi]
+  speciesRestriction: [Resomi]
   sprites:
   - sprite: _Floofstation/Mobs/Customization/resomi_parts.rsi
     state: r_foot_feathers
@@ -64,7 +64,7 @@
   id: ResomiFluff
   bodyPart: Chest
   markingCategory: Chest
-  speciesRestriction: [Resomi, ProtoResomi]
+  speciesRestriction: [Resomi]
   sprites:
   - sprite: _Floofstation/Mobs/Customization/resomi_parts.rsi
     state: fluff
@@ -73,7 +73,7 @@
   id: ResomiFluffHead
   bodyPart: Head
   markingCategory: Head
-  speciesRestriction: [Resomi, ProtoResomi]
+  speciesRestriction: [Resomi]
   sprites:
   - sprite: _Floofstation/Mobs/Customization/resomi_parts.rsi
     state: fluff_head
@@ -82,7 +82,7 @@
   id: ResomiFluffHeadUp
   bodyPart: Head
   markingCategory: Head
-  speciesRestriction: [Resomi, ProtoResomi]
+  speciesRestriction: [Resomi]
   sprites:
   - sprite: _Floofstation/Mobs/Customization/resomi_parts.rsi
     state: fluff_head_up

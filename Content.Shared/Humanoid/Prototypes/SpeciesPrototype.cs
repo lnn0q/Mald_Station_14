@@ -34,7 +34,6 @@
 
 using Content.Shared.Dataset;
 using Content.Shared.Humanoid.Markings;
-using Content.Shared.Preferences.Loadouts;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.Humanoid.Prototypes;
@@ -129,12 +128,6 @@ public sealed partial class SpeciesPrototype : IPrototype
     [DataField]
     public SpeciesNaming Naming { get; private set; } = SpeciesNaming.FirstLast;
 
-    /// <summary>
-    /// If true, profile UI may allow entering a custom displayed species name.
-    /// </summary>
-    [DataField]
-    public bool CustomName { get; private set; } = false;
-
     [DataField]
     public List<Sex> Sexes { get; private set; } = new() { Sex.Male, Sex.Female };
 
@@ -220,24 +213,6 @@ public sealed partial class SpeciesPrototype : IPrototype
     public float AverageWidth = 40f;
 
     // end Goobstation: port EE height/width sliders
-
-    /// <summary>
-    ///     How many points species get for installing cybernetics at roundstart.
-    /// </summary>
-    [DataField]
-    public int RoundstartCyberwareCapacity = 3;
-
-    [DataField]
-    public ProtoId<SpeciesPrototype>? SubspeciesOf = null;
-
-    [DataField]
-    public LocId? SubspeciesName = null;
-
-    [DataField]
-    public bool HasSubspecies = false;
-
-    [DataField]
-    public ProtoId<RoleLoadoutPrototype>? Loadout = null;
 }
 
 public enum SpeciesNaming : byte
@@ -249,6 +224,5 @@ public enum SpeciesNaming : byte
     LastFirst, // DeltaV
     LastNoFirst, // DeltaV
     FirstDashLast, // Goobstation
-    FirstRoman, // EE Plasmeme Change
-    PrefixSuffix // Starlight
+    FirstRoman // EE Plasmeme Change
 }

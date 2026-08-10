@@ -66,7 +66,7 @@
   id: MakeupMothLips
   bodyPart: Face
   markingCategory: Face
-  speciesRestriction: [Moth, ProtoMoth]
+  speciesRestriction: [Moth]
   coloring:
     default:
       type:
@@ -80,7 +80,7 @@
   id: MakeupMothBlush
   bodyPart: Face
   markingCategory: Face
-  speciesRestriction: [Moth, ProtoMoth]
+  speciesRestriction: [Moth]
   coloring:
     default:
       type:

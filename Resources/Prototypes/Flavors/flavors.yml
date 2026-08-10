@@ -1568,8 +1568,3 @@
   id: artifactglue
   flavorType: Complex
   description: flavor-complex-artifact-glue
-
-- type: flavor
-  id: allulalo
-  flavorType: Complex
-  description: flavor-complex-allulalo

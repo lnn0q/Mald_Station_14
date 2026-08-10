@@ -223,7 +223,7 @@
   id: TattooEyeMothRight
   bodyPart: Eyes
   markingCategory: Overlay
-  speciesRestriction: [Moth, ProtoMoth]
+  speciesRestriction: [Moth]
   coloring:
     default:
       type:
@@ -237,7 +237,7 @@
   id: TattooEyeMothLeft
   bodyPart: Eyes
   markingCategory: Overlay
-  speciesRestriction: [Moth, ProtoMoth]
+  speciesRestriction: [Moth]
   coloring:
     default:
       type:

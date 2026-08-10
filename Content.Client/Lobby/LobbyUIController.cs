@@ -424,8 +424,6 @@ public sealed class LobbyUIController : UIController, IOnStateEntered<LobbyState
             var loadout = profile.GetLoadoutOrDefault(LoadoutSystem.GetJobPrototype(job.ID), _playerManager.LocalSession, profile.Species, EntityManager, _prototypeManager);
             GiveDummyLoadout(dummy, loadout);
         }
-
-        GiveDummyLoadout(dummy, profile.GetSpeciesLoadoutOrDefault(_playerManager.LocalSession, _prototypeManager));
     }
 
     /// <summary>
@@ -564,9 +562,6 @@ public sealed class LobbyUIController : UIController, IOnStateEntered<LobbyState
         }
 
         _humanoid.LoadProfile(dummyEnt, humanoid);
-
-        if (humanoid != null)
-            GiveDummyLoadout(dummyEnt, humanoid.GetSpeciesLoadoutOrDefault(_playerManager.LocalSession, _prototypeManager));
 
         if (humanoid != null && jobClothes)
         {
