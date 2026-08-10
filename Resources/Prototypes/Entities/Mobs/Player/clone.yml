@@ -132,15 +132,9 @@
   - LanguageKnowledge
   - ForeignerTrait
   # Einstein Engines - Language end
-
-  # Ratbite
-  - CaptainSaberWeaknessComponent
-  - Prisoner
-  - Atheist
+  # ratbite
   - CombatTrained
   - CombatUntrained
-  # End ratbite
-
   blacklist:
     components:
     - AttachedClothing # helmets, which are part of the suit
