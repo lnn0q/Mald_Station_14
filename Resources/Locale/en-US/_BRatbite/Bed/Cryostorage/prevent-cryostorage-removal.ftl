@@ -1,1 +1,0 @@
-cryostorage-prevent-removal = You are unable to unlock the cryogenic storage. You suddenly feel a sense of guilt rushing over you
