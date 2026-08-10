@@ -107,7 +107,7 @@
 # Command
 - type: entity
   id: LockerCaptain
-  parent: LockerMindshielded
+  parent: LockerBaseSecure
   name: captain's locker
   components:
   - type: Appearance
@@ -117,11 +117,10 @@
     stateDoorClosed: cap_door
   - type: AccessReader
     access: [["Captain"]]
-    needsMindshield: true
 
 - type: entity
   id: LockerHeadOfPersonnel
-  parent: LockerMindshielded
+  parent: LockerBaseSecure
   name: head of personnel's locker
   components:
   - type: Appearance
@@ -131,12 +130,11 @@
     stateDoorClosed: hop_door
   - type: AccessReader
     access: [["HeadOfPersonnel"]]
-    needsMindshield: true
 
 # CE
 - type: entity
   id: LockerChiefEngineer
-  parent: LockerMindshielded
+  parent: LockerBaseSecure
   name: chief engineer's locker
   components:
   - type: Appearance
@@ -146,7 +144,6 @@
     stateDoorClosed: ce_door
   - type: AccessReader
     access: [ [ "ChiefEngineer" ] ]
-    needsMindshield: true
 
 # Electrical supplies
 - type: entity
@@ -326,7 +323,7 @@
 # CMO
 - type: entity
   id: LockerChiefMedicalOfficer
-  parent: LockerMindshielded
+  parent: LockerBaseSecure
   name: chief medical officer's locker
   components:
   - type: Appearance
@@ -336,7 +333,6 @@
     stateDoorClosed: cmo_door
   - type: AccessReader
     access: [ [ "ChiefMedicalOfficer" ] ]
-    needsMindshield: true
 
 # Science
 - type: entity
@@ -368,7 +364,7 @@
 # HoS
 - type: entity
   id: LockerHeadOfSecurity
-  parent: LockerMindshielded
+  parent: LockerBaseSecure
   name: head of security's locker
   components:
   - type: Appearance
@@ -378,12 +374,11 @@
     stateDoorClosed: hos_door
   - type: AccessReader
     access: [["HeadOfSecurity"]]
-    needsMindshield: true
 
 # Warden
 - type: entity
   id: LockerWarden
-  parent: LockerMindshielded
+  parent: LockerBaseSecure
   name: warden's locker
   components:
   - type: Appearance
@@ -393,7 +388,6 @@
     stateDoorClosed: warden_door
   - type: AccessReader
     access: [["Armory"]]
-    needsMindshield: true
 
 # Brigmedic
 - type: entity
@@ -655,12 +649,11 @@
 - type: entity
   id: LockerRepresentative
   name: representative locker
-  parent: LockerMindshielded
+  parent: LockerBaseSecure
   components:
   - type: Appearance
   - type: AccessReader
     access: [["Command"]]
-    needsMindshield: true
   - type: EntityStorageVisuals
     stateBaseClosed: hop
     stateDoorOpen: hop_open

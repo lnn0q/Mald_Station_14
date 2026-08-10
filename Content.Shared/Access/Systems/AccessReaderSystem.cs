@@ -108,7 +108,6 @@ using Robust.Shared.Collections;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
-using Content.Shared.Mindshield.Components;
 
 namespace Content.Shared.Access.Systems;
 
@@ -125,8 +124,6 @@ public sealed class AccessReaderSystem : EntitySystem
     [Dependency] private readonly SharedStationRecordsSystem _recordsSystem = default!;
 
     private static readonly ProtoId<TagPrototype> PreventAccessLoggingTag = "PreventAccessLogging";
-    private static readonly ProtoId<TagPrototype> BypassMindshieldAccessRequirementTag = "BypassMindshieldAccessRequirement";
-
     public override void Initialize()
     {
         base.Initialize();
@@ -184,11 +181,9 @@ public sealed class AccessReaderSystem : EntitySystem
         if (!GetMainAccessReader(uid, out var accessReader))
             return;
 
-        // Ratbite: make access breaker remove NeedsMindshield
-        if (accessReader.Value.Comp.AccessLists.Count < 1 && !accessReader.Value.Comp.NeedsMindshield)
+        if (accessReader.Value.Comp.AccessLists.Count < 1)
             return;
 
-        accessReader.Value.Comp.NeedsMindshield = false;
         args.Repeatable = true;
         args.Handled = true;
         accessReader.Value.Comp.AccessLists.Clear();
@@ -215,9 +210,6 @@ public sealed class AccessReaderSystem : EntitySystem
         var access = FindAccessTags(user, accessSources);
         FindStationRecordKeys(user, out var stationKeys, accessSources);
 
-        if (reader.NeedsMindshield && !HasMindshieldAccess(user))
-            return false;
-
         if (!IsAllowed(access, stationKeys, target, reader))
             return false;
 
@@ -225,11 +217,6 @@ public sealed class AccessReaderSystem : EntitySystem
             LogAccess((target, reader), user);
 
         return true;
-    }
-
-    public bool HasMindshieldAccess(EntityUid user)
-    {
-        return HasComp<MindShieldComponent>(user) || _tag.HasTag(user, BypassMindshieldAccessRequirementTag);
     }
 
     /// <summary>
