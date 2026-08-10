@@ -194,10 +194,8 @@ public sealed class PlayTimeTrackingManager : ISharedPlaytimeManager, IPostInjec
     {
         var time = _timing.RealTime;
 
-        foreach (var key in _playTimeData.Keys)
+        foreach (var data in _playTimeData.Values)
         {
-            FlushPermaTime(key);
-            var data = _playTimeData[key];
             FlushSingleTracker(data, time);
         }
     }
@@ -226,7 +224,6 @@ public sealed class PlayTimeTrackingManager : ISharedPlaytimeManager, IPostInjec
         var time = _timing.RealTime;
         var data = _playTimeData[player];
 
-        FlushPermaTime(player);
         FlushSingleTracker(data, time);
     }
 
