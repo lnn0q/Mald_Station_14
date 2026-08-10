@@ -1,10 +1,7 @@
 using Content.Shared.Actions;
-using Content.Shared.Administration.Logs;
 using Content.Shared.CombatMode.Pacification;
 using Content.Shared.Damage;
-using Content.Shared.Database;
 using Content.Shared.GameTicking;
-using Content.Shared.Mind;
 using Content.Shared.Mind.Components;
 using Content.Shared.Popups;
 using Content.Shared.StatusEffectNew;
@@ -19,7 +16,6 @@ public abstract class SharedCryoSicknessSystem : EntitySystem
     [Dependency] private readonly SharedActionsSystem _actions = default!;
     [Dependency] private readonly StatusEffectsSystem _statusEffectsSystem = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly ISharedAdminLogManager _adminLog = default!; // Ratbite: add logs when drawing implants
     public override void Initialize()
     {
         base.Initialize();
@@ -89,8 +85,6 @@ public abstract class SharedCryoSicknessSystem : EntitySystem
         var newTime = _timing.CurTime + TimeSpan.FromSeconds(ent.Comp.ExpireSecondsAfterDamage);
         if (newTime < ent.Comp.ExpireTime)
             ent.Comp.ExpireTime = newTime;
-        if (args.Origin is null) return;
-        _adminLog.Add(LogType.Action, LogImpact.Extreme, $"{ToPrettyString(args.Origin.Value):player} attacked {ToPrettyString(ent):player}, who still had cryo sickness");
     }
 
     public void ApplyComponent(EntityUid ent)
@@ -105,7 +99,6 @@ public abstract class SharedCryoSicknessSystem : EntitySystem
 
     private void OnShakeAwake(Entity<CryoSicknessComponent> ent, ref ShakeAwakeEvent args)
     {
-        _adminLog.Add(LogType.Action, LogImpact.Extreme, $"{ToPrettyString(ent):player} shook themselves off cryo sickness.");
         RemComp<CryoSicknessComponent>(ent);
     }
 }
