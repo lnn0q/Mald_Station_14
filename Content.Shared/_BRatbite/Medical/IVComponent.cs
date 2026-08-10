@@ -1,7 +1,5 @@
 using Robust.Shared.Utility;
 using Robust.Shared.GameStates;
-using Robust.Shared.Serialization;
-using Content.Shared.DoAfter;
 
 namespace Content.Shared._BRatbite.Medical;
 
@@ -34,18 +32,4 @@ public sealed partial class IVComponent : Component
 
     [DataField]
     public string SolutionName = "beaker";
-}
-
-
-[Serializable, NetSerializable]
-public sealed partial class IVAttachDoAfterEvent : DoAfterEvent
-{
-    public NetEntity NewEntity;
-
-    public IVAttachDoAfterEvent(NetEntity newEntity)
-    {
-        NewEntity = newEntity;
-    }
-
-    public override IVAttachDoAfterEvent Clone() => this;
 }
