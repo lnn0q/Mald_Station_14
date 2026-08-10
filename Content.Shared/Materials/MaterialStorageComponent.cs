@@ -111,10 +111,6 @@ public sealed partial class MaterialStorageComponent : Component
     [DataField, AutoNetworkedField]
     public bool IgnoreMaterialWhiteList;
     // Goobstation Change End
-
-    // Ratbite: Add eject verb on some machines
-    [DataField]
-    public bool AddEjectVerb = false;
 }
 
 [Serializable, NetSerializable]

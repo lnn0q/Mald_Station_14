@@ -284,7 +284,6 @@
     generatingFinishedSound:
       path: /Audio/Machines/beep.ogg
   - type: MaterialStorage
-    addEjectVerb: true # Ratbite: Allow ejection of plasma
     whitelist:
       tags:
         - Sheet
