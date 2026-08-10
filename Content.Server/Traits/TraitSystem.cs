@@ -42,7 +42,7 @@ public sealed class TraitSystem : EntitySystem
     }
 
     // When the player is spawned in, add all trait components selected during character creation
-    public void OnPlayerSpawnComplete(PlayerSpawnCompleteEvent args)
+    private void OnPlayerSpawnComplete(PlayerSpawnCompleteEvent args)
     {
         // Check if player's job allows to apply traits
         if (args.JobId == null ||

@@ -17,7 +17,6 @@ using Content.Shared.Players;
 using Content.Shared.Roles;
 using Content.Shared.Roles.Jobs;
 using Content.Shared.Security.Components;
-using Content.Server.Traits;
 using Content.Shared.Cuffs;
 using Content.Shared.Cuffs.Components;
 using Content.Shared.Hands.EntitySystems;
@@ -55,7 +54,6 @@ public sealed class PermaBrigSystem : GameRuleSystem<PermaBrigComponent>
     [Dependency] private readonly SharedIdCardSystem _idCard = default!;
     [Dependency] private readonly EntityManager _ent = default!;
     [Dependency] private readonly InventorySystem _inventory = default!;
-    [Dependency] private readonly TraitSystem _trait = default!;
     [Dependency] private readonly CryoSicknessSystem _cryoSicknessSystem = default!;
     [Dependency] private readonly SharedCuffableSystem _cuffableSystem = default!;
     [Dependency] private readonly SharedHandsSystem _hands = default!;
@@ -258,7 +256,6 @@ public sealed class PermaBrigSystem : GameRuleSystem<PermaBrigComponent>
             character);
 
         _stationRecords.OnPlayerSpawn(aev);
-        _trait.OnPlayerSpawnComplete(aev);
         _cryoSicknessSystem.ApplyComponent(mob);
     }
 
