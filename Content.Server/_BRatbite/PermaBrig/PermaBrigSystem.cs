@@ -30,7 +30,7 @@ using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Utility;
-using Content.Server._BRatbite.CryoSickness;
+using Content.Shared._BRatbite.CryoSickness;
 
 namespace Content.Server._BRatbite.PermaBrig;
 
