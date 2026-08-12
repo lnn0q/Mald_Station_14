@@ -13,8 +13,10 @@ public sealed partial class SlasherPossessionComponent : Component
     [ViewVariables]
     public EntityUid? ActionEnt;
 
-    [DataField]
-    public EntProtoId ActionId = "ActionSlasherPossession";
+    // Ratbite - Removed possession in favor of regeneration being able to store souls
+    // Ratbite - Leaving the rest of the code uncommented (since it doesnt really get called anyway.. shouldnt be that much of a problem..?)
+    // [DataField]
+    // public EntProtoId ActionId = "ActionSlasherPossession"; 
 
     /// <summary>
     /// How long you want the possesion to last

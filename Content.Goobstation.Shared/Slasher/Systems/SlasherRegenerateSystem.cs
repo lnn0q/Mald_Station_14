@@ -53,7 +53,7 @@ public sealed class SlasherRegenerateSystem : EntitySystem
             return;
 
         // Check if a soul is available to use
-        if (!comp.HasSoulAvailable)
+        if (comp.SoulsAvailable <= 0) // Ratbite - made storing souls possible in exchange for removing possession
         {
             _popup.PopupPredicted(Loc.GetString("slasher-regenerate-no-soul"), uid, uid);
             return;
@@ -79,7 +79,14 @@ public sealed class SlasherRegenerateSystem : EntitySystem
         _audio.PlayPredicted(comp.RegenerateSound, uid, uid);
 
         // Consume the soul
-        comp.HasSoulAvailable = false;
+        // <Ratbite> - made storing souls possible in exchange for removing possession
+        comp.SoulsAvailable--;
+
+        if (comp.SoulsAvailable == 0)
+            _popup.PopupPredicted(Loc.GetString("slasher-regenerate-soul-emptied"), uid, uid, PopupType.MediumCaution);
+
+        // </Ratbite>
+
         Dirty(uid, comp);
 
         args.Handled = true;
@@ -109,7 +116,13 @@ public sealed class SlasherRegenerateSystem : EntitySystem
         if (!Resolve(uid, ref comp))
             return;
 
-        comp.HasSoulAvailable = true;
+        // <Ratbite> - made storing souls possible in exchange for removing possession
+        if (comp.SoulsAvailable >= comp.MaxSouls)
+            return;
+
+        comp.SoulsAvailable++;
+        // </Ratbite>
+
         Dirty(uid, comp);
     }
 }
