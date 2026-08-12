@@ -1,21 +1,5 @@
 - type: entity
   parent: BaseAction
-  id: ActionPlushieSqueak
-  name: Squeak
-  description: Make a plushie noise.
-  components:
-  - type: Action
-    useDelay: 1
-    checkCanInteract: false
-    itemIconStyle: BigAction
-    icon:
-      sprite: Objects/Fun/Plushies/hampter.rsi
-      state: icon
-  - type: InstantAction
-    event: !type:PlushieSqueakActionEvent
-
-- type: entity
-  parent: BaseAction
   id: ActionTraitLeap
   name: Leap
   description: Propel yourself a short distance in the direction of your gaze.

@@ -20,7 +20,7 @@
       species:
       - Felinid
       - Scurret
-  goobcoins: 45
+  goobcoins: 60
   weight: 20
   startingGear: RSOGear
   icon: "JobIconRSO"
@@ -59,7 +59,7 @@
     pocket1: ClothingMaskGasSecurity
   storage:
     back:
-   # - CQCManual, No fuck you
+    - KravMagaImplanter
     - BookSpaceLaw
     - Flash
     - RSOUndeterminedWeapon

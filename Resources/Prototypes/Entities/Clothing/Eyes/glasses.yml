@@ -203,6 +203,9 @@
     tags:
     - PetWearable
     - WhitelistChameleon
+  - type: Contraband # Ratbite: Made contraband again
+    allowedDepartments: [ Engineering, Cargo ]
+    allowedJobs: [ BlueshieldOfficer ]
 
 - type: entity
   parent: ClothingEyesBase
@@ -456,21 +459,10 @@
   name: ninja visor
   description: An advanced visor protecting a ninja's eyes from flashing lights.
   components:
-  - type: Tag
-    tags:
-    - WhitelistChameleon
   - type: Sprite
     sprite: Clothing/Eyes/Glasses/ninjavisor.rsi
   - type: Clothing
     sprite: Clothing/Eyes/Glasses/ninjavisor.rsi
-  - type: ChameleonClothing
-    slot: [eyes]
-    default: ClothingEyesVisorNinja
-    affectedByEmp: false
-  - type: UserInterface
-    interfaces:
-      enum.ChameleonUiKey.Key:
-        type: ChameleonBoundUserInterface
   - type: FlashImmunity
   - type: NightVision
     isEquipment: true

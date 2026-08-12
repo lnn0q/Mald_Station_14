@@ -46,7 +46,6 @@ using Content.Shared.Prototypes;
 using Content.Shared.Stacks;
 using Content.Shared.Standing;
 using Content.Shared.StatusEffectNew;
-using Content.Shared.Tag;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Map;
 using Robust.Shared.Network;
@@ -73,7 +72,6 @@ public abstract partial class SharedSurgerySystem : EntitySystem
     [Dependency] private readonly RotateToFaceSystem _rotateToFace = default!;
     [Dependency] private readonly StandingStateSystem _standing = default!;
     [Dependency] private readonly SharedStackSystem _stack = default!;
-    [Dependency] private readonly TagSystem _tag = default!;
     [Dependency] private readonly SharedTransformSystem _transform = default!;
     [Dependency] private readonly WoundSystem _wounds = default!;
     [Dependency] private readonly TraumaSystem _trauma = default!;

@@ -40,9 +40,6 @@
   name: satchel
   description: A trendy looking satchel.
   components:
-  - type: Tag
-    tags:
-    - WhitelistChameleon
   - type: Sprite
     sprite: Clothing/Back/Satchels/satchel.rsi
   - type: Storage

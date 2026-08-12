@@ -365,14 +365,6 @@
     sprite: Clothing/Head/Helmets/spaceninja.rsi
   - type: Clothing
     sprite: Clothing/Head/Helmets/spaceninja.rsi
-  - type: ChameleonClothing
-    slot: [HEAD]
-    default: ClothingHeadHelmetSpaceNinja
-    affectedByEmp: false
-  - type: UserInterface
-    interfaces:
-      enum.ChameleonUiKey.Key:
-        type: ChameleonBoundUserInterface
   - type: Tag
     tags:
     - WhitelistChameleon

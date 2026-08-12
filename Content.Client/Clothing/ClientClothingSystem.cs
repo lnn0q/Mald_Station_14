@@ -152,12 +152,9 @@ public sealed class ClientClothingSystem : ClothingSystem
                 return;
         }
 
-        if (!FilterInvalidLayers(uid, item, args.Slot, inventory.SpeciesId, layers, out var validLayers))
-            return;
-
         // add each layer to the visuals
         var i = 0;
-        foreach (var layer in validLayers)
+        foreach (var layer in layers)
         {
             var key = layer.MapKeys?.FirstOrDefault();
             if (key == null)
@@ -170,41 +167,6 @@ public sealed class ClientClothingSystem : ClothingSystem
             item.MappedLayer = key;
             args.Layers.Add((key, layer));
         }
-    }
-
-    private bool FilterInvalidLayers(
-        EntityUid uid,
-        ClothingComponent clothing,
-        string slot,
-        string? speciesId,
-        List<PrototypeLayerData> layers,
-        [NotNullWhen(true)] out List<PrototypeLayerData>? validLayers)
-    {
-        validLayers = new List<PrototypeLayerData>(layers.Count);
-
-        foreach (var layer in layers)
-        {
-            if (HasValidLayerState(layer, clothing))
-                validLayers.Add(layer);
-        }
-
-        if (validLayers.Count > 0)
-            return true;
-
-        return TryGetDefaultVisuals(uid, clothing, slot, speciesId, out validLayers);
-    }
-
-    private bool HasValidLayerState(PrototypeLayerData layer, ClothingComponent clothing)
-    {
-        if (layer.TexturePath != null || layer.State == null)
-            return true;
-
-        var rsiPath = layer.RsiPath ?? clothing.RsiPath;
-        if (rsiPath == null)
-            return true;
-
-        var rsi = _cache.GetResource<RSIResource>(SpriteSpecifierSerializer.TextureRoot / rsiPath).RSI;
-        return rsi.TryGetState(layer.State, out _);
     }
 
     /// <summary>

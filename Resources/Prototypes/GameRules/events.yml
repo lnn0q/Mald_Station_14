@@ -455,7 +455,6 @@
       - type: AutoImplant
         implants:
         - MicroBombImplant # Goobstation
-        - ChameleonControllerImplant # Ratbite
       - type: RandomMetadata
         nameSegments:
         - NamesNinjaTitle

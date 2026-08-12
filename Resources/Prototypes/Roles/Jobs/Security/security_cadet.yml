@@ -119,7 +119,7 @@
   - Security
   - OfficerCadet SOP
   - Searches SOP
-  goobcoins: 30 #Goob content
+  goobcoins: 40 # Ratbite
   access:
   - Security
   - Brig
@@ -149,7 +149,8 @@
   storage:
     back:
     - Flash
-    - MagazinePistol
+    #- MagazinePistol - #Ratbite, PEW for cadet
+    - WeaponEnergyGunLockedEnergyPistol #Ratbite, PEW for cadet
 
 - type: chameleonOutfit
   id: SecurityCadetChameleonOutfit

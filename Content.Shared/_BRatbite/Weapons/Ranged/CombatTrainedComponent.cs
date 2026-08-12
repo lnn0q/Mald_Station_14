@@ -4,7 +4,4 @@ namespace Content.Shared._BRatbite.Weapons.Ranged;
 
 [RegisterComponent]
 public sealed partial class CombatTrainedComponent : Component
-{
-    [DataField]
-    public float AccuracyMultiplier = 0.9f;
-}
+{ }

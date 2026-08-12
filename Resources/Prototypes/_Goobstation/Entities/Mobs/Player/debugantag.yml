@@ -64,7 +64,6 @@
   - type: AutoImplant
     implants:
     - AntagImplantSpaceNinja
-    - ChameleonControllerImplant # Ratbite
 
 - type: entity
   categories:
@@ -122,4 +121,5 @@
   - type: Loadout
     prototypes: [ VisitorCaptain ]
     roleLoadout: [ RoleSurvivalExtended ]
+
 

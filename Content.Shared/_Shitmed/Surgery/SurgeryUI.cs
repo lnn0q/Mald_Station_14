@@ -5,8 +5,6 @@
 
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
-using Content.Shared._Shitmed.Medical.Surgery.Wounds;
-using Content.Shared._Shitmed.Targeting;
 
 namespace Content.Shared._Shitmed.Medical.Surgery;
 
@@ -17,31 +15,9 @@ public enum SurgeryUIKey
 }
 
 [Serializable, NetSerializable]
-public sealed class SurgeryPartBuiData(
-    NetEntity part,
-    TargetBodyPart targetPart,
-    string name,
-    WoundableSeverity severity,
-    List<EntProtoId> surgeries)
-{
-    public readonly NetEntity Part = part;
-    public readonly TargetBodyPart TargetPart = targetPart;
-    public readonly string Name = name;
-    public readonly WoundableSeverity Severity = severity;
-    public readonly List<EntProtoId> Surgeries = surgeries;
-}
-
-[Serializable, NetSerializable]
-public sealed class SurgeryBuiState(
-    Dictionary<NetEntity, List<EntProtoId>> choices,
-    Dictionary<TargetBodyPart, SurgeryPartBuiData> parts,
-    string patientName,
-    string speciesName) : BoundUserInterfaceState
+public sealed class SurgeryBuiState(Dictionary<NetEntity, List<EntProtoId>> choices) : BoundUserInterfaceState
 {
     public readonly Dictionary<NetEntity, List<EntProtoId>> Choices = choices;
-    public readonly Dictionary<TargetBodyPart, SurgeryPartBuiData> Parts = parts;
-    public readonly string PatientName = patientName;
-    public readonly string SpeciesName = speciesName;
 }
 
 [Serializable, NetSerializable]

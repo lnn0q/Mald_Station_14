@@ -297,21 +297,10 @@
   name: space ninja suit
   description: This black technologically advanced, cybernetically-enhanced suit provides many abilities like invisibility or teleportation.
   components:
-  - type: Tag
-    tags:
-    - WhitelistChameleon
   - type: Sprite
     sprite: Clothing/OuterClothing/Suits/spaceninja.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Suits/spaceninja.rsi
-  - type: ChameleonClothing
-    slot: [outerClothing]
-    default: ClothingOuterSuitSpaceNinja
-    affectedByEmp: false
-  - type: UserInterface
-    interfaces:
-      enum.ChameleonUiKey.Key:
-        type: ChameleonBoundUserInterface
   # hardsuit stuff
   - type: PressureProtection
     highPressureMultiplier: 0.6
@@ -509,3 +498,4 @@
     - jumpsuit
   - type: StaticPrice
     price: 1500
+

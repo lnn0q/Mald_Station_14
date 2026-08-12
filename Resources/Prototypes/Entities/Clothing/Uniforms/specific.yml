@@ -18,11 +18,7 @@
   components:
     - type: Tag
       tags:
-      - ClothMade
-      - Recyclable
-      - WhitelistChameleon
       - Skirt # Goobstation
-      - SpaceNinjaChameleonJumpsuit
     - type: Sprite
       sprite: Clothing/Uniforms/Jumpsuit/color.rsi
       layers:
@@ -40,12 +36,12 @@
           color: "#3f3f3f"
         - state: trinkets-inhand-right
     - type: Clothing
-      sprite: Clothing/Uniforms/Jumpsuit/color.rsi
+      sprite: Clothing/Shoes/color.rsi
       clothingVisuals:
-        jumpsuit:
-        - state: equipped-INNERCLOTHING
-          color: "#3f3f3f"
-        - state: trinkets-equipped-INNERCLOTHING
+        shoes:
+        - state: equipped-FEET
+          color: "#1d1d1d"
+        - state: soles-equipped-FEET
     - type: SuitSensor
       randomMode: false
       mode: SensorOff

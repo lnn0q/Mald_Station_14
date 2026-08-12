@@ -34,7 +34,6 @@
       - type: AutoImplant
         implants:
         - DeathAcidifierImplant
-        - ChameleonControllerImplant # Ratbite
       - type: RandomMetadata
         nameSegments:
         - NamesNinjaTitle

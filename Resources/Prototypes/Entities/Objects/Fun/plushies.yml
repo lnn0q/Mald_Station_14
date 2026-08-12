@@ -5,7 +5,6 @@
   parent: [BaseItem, BaseStash]
   id: BasePlushie
   components:
-  - type: PlushieBrain
   - type: EmitSoundOnUse
     sound:
       collection: ToySqueak
