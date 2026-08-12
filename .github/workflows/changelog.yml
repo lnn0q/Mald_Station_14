@@ -11,7 +11,7 @@ on:
     types: [closed]
 
 env:
-  GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+  GITHUB_TOKEN: ${{ github.token }}
   CHANGELOG_DIR: ${{ vars.CHANGELOG_DIR }}
   PR_NUMBER: ${{ github.event.number }}
 
@@ -25,7 +25,7 @@ jobs:
       - name: Checkout Master
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.BOT_TOKEN }}
+          token: ${{ github.token }}
           ref: "${{ vars.CHANGELOG_BRANCH }}"
 
       - name: Setup Git
@@ -55,7 +55,7 @@ jobs:
 
       - name: Commit Changelog
         run: |
-          git add *.yml
+          git add "${{ vars.CHANGELOG_DIR }}"
           git commit -m "${{ vars.CHANGELOG_MESSAGE }} (#${{ env.PR_NUMBER }})"
           git push
         shell: bash
