@@ -71,10 +71,6 @@
       - Alive
   - type: StealTarget
     stealGroup: WeaponSecHeadSword
-    # Ratbite: give weapon buff against perma prisoners
-  - type: HosSaber
-    # This is a 3% multiplicative buff per every hour of sentence.
-    damageMultiplierPerMinute: 0.0005
   - type: ItemSwitch
     needsPower: true
     defaultState: off

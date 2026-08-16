@@ -6,6 +6,7 @@
   components:
   - type: Sprite
     sprite: _Omu/Objects/Weapons/Melee/wardenrapier.rsi
+    state: inhand-left
   - type: MeleeWeapon
     angle: 0
     animationRotation: -90
