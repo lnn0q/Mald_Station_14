@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 Sprinkle <40203084+lnn0q@users.noreply.github.com>
 # SPDX-FileCopyrightText: 2019 DamianX <DamianX@users.noreply.github.com>
 # SPDX-FileCopyrightText: 2019 L.E.D <10257081+unusualcrow@users.noreply.github.com>
 # SPDX-FileCopyrightText: 2020 Decappi <kit0001@gmail.com>
@@ -691,9 +692,6 @@
   - type: GuideHelp
     guides:
     - Robotics
-  - type: AccessReader # Ratbite: Add access reader to fabs
-    access: [["Research"]]
-
 - type: entity
   id: Biofabricator
   parent: BaseLatheLube
@@ -736,9 +734,6 @@
     - HostileCubesStatic
     # Goobstation Packs
     - EmagCubesStatic
-  - type: AccessReader # Ratbite: Add access reader to fabs
-    access: [["Medical"]]
-
 - type: entity
   id: SecurityTechFab
   parent: [BaseLatheLube, BaseSiloUtilizer] # Goob edit
@@ -815,9 +810,6 @@
         - Sheet
         - RawMaterial
         - Ingot
-  - type: AccessReader # Ratbite: Add access reader to fabs
-    access: [["Security"]]
-
 - type: entity
   id: AmmoTechFab
   parent: [BaseLatheLube, BaseSiloUtilizer] # Goob edit
@@ -856,9 +848,6 @@
           - Sheet
           - RawMaterial
           - Ingot
-    - type: AccessReader # Ratbite: Add access reader to fabs
-      access: [["Security"]]
-
 - type: entity
   id: MedicalTechFab
   parent: [BaseLatheLube, BaseSiloUtilizer] #Goobstation - Circuitboards description
@@ -924,9 +913,6 @@
     - SyndicateCatridgesStatic
   - type: StealTarget
     stealGroup: MedicalTechFabCircuitboard
-  - type: AccessReader # Ratbite: Add access reader to fabs
-    access: [["Medical"]]
-
 - type: entity
   parent: BaseLathe
   id: UniformPrinter
@@ -1064,9 +1050,6 @@
     - type: MiningPoints # DeltaV - Source of mining points for miners
     - type: MiningPointsLathe # DeltaV
     - type: MaterialStorageMagnetPickup # Frontier
-    - type: AccessReader # Ratbite: Add access reader to fabs
-      access: [["Cargo"]]
-
 - type: entity
   parent: OreProcessor
   id: OreProcessorIndustrial

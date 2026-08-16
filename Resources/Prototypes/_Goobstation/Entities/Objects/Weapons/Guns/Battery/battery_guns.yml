@@ -384,12 +384,6 @@
         whitelist:
           tags:
             - EnergyMagAmmo
-  - type: FiringPin #Ratbite, mindshield restriction system
-  - type: Lock #Ratbite
-    locked: true
-  - type: AccessReader #Ratbite
-    access: [ [ "Security" ] ]
-
 - type: entity
   name: DT-12 "Lawbringer"
   parent: [BaseWeaponBatterySmall, BaseGrandTheftContraband]

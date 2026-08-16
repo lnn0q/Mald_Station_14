@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 Sprinkle <40203084+lnn0q@users.noreply.github.com>
 # SPDX-FileCopyrightText: 2025 Aiden <28298836+Aidenkrz@users.noreply.github.com>
 # SPDX-FileCopyrightText: 2025 Aviu00 <93730715+Aviu00@users.noreply.github.com>
 # SPDX-FileCopyrightText: 2025 Aviu00 <aviu00@protonmail.com>
@@ -86,9 +87,6 @@
         - Sheet
         - RawMaterial
         - Ingot
-  - type: AccessReader # Ratbite: Add access reader to fabs
-    access: [["Engineering"]]
-
 - type: entity
   id: CargoTechFab
   parent: [BaseLatheLube, BaseSiloUtilizer]
@@ -152,9 +150,6 @@
         - Sheet
         - RawMaterial
         - Ingot
-  - type: AccessReader # Ratbite: Add access reader to fabs
-    access: [["Cargo"]]
-
 - type: entity
   id: ScienceTechFab
   parent: [BaseLatheLube, BaseSiloUtilizer]
@@ -243,9 +238,6 @@
         - Sheet
         - RawMaterial
         - Ingot
-  - type: AccessReader # Ratbite: Add access reader to fabs
-    access: [["Research"]]
-
 - type: entity
   id: ServiceTechFab
   parent: [BaseLatheLube, BaseSiloUtilizer]
@@ -305,5 +297,3 @@
         - Sheet
         - RawMaterial
         - Ingot
-  - type: AccessReader # Ratbite: Add access reader to fabs
-    access: [["Service"]]

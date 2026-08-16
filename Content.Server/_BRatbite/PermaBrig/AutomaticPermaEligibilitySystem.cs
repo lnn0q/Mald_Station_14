@@ -106,7 +106,7 @@ public sealed class AutomaticPermaEligibilitySystem : EntitySystem
         ClearReportsForVictim(args.Mind.Owner, args.Mind.Comp.UserId.Value, "victim mind transferred to a living body or container");
     }
 
-    private void OnTransferredToClone(TransferredToCloneEvent args)
+    private void OnTransferredToClone(ref TransferredToCloneEvent args)
     {
         ClearReportsForVictim(args.Cloned, "victim cloned");
     }

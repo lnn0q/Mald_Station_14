@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Sprinkle <40203084+lnn0q@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2020 ComicIronic <comicironic@gmail.com>
 // SPDX-FileCopyrightText: 2020 Víctor Aguilera Puerto <6766154+Zumorica@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2020 chairbender <kwhipke1@gmail.com>
@@ -522,12 +523,6 @@ namespace Content.Server.Lathe
 
         private void OnLatheQueueRecipeMessage(EntityUid uid, LatheComponent component, LatheQueueRecipeMessage args)
         {
-            // Ratbite
-            if (!_accessReader.IsAllowed(args.Actor, uid))
-            {
-                _popup.PopupEntity("lathe-no-access", args.Actor, args.Actor);
-                return;
-            }
             if (_proto.TryIndex(args.ID, out LatheRecipePrototype? recipe))
             {
                 var count = 0;
