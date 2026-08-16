@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Sprinkle <40203084+lnn0q@users.noreply.github.com>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Server.Administration.Systems;
 using Content.Server.Chat.Managers;
 using Content.Server.GameTicking;
@@ -87,7 +91,7 @@ public sealed class PermaBrigSystem : GameRuleSystem<PermaBrigComponent>
 
         foreach (var session in pool)
         {
-            if (_permaBrigManager.GetBrigTime(session.UserId) == 0)
+            if (_permaBrigManager.GetBrigRounds(session.UserId) == 0)
                 continue;
             PermaIndividuals.Add(session);
             _sawmill.Info($"Player intercepted for perma: {session}");
@@ -99,6 +103,7 @@ public sealed class PermaBrigSystem : GameRuleSystem<PermaBrigComponent>
             GameTicker.PlayerJoinGame(player);
 
             SpawnPrisonerPlayer(player, _permaBrigManager.GetBrigInpatient(player.UserId));
+            _permaBrigManager.RemoveBrigRounds(player.UserId, 1);
 
             _sawmill.Info($"Player sent to perma: {player}");
         }
@@ -113,12 +118,13 @@ public sealed class PermaBrigSystem : GameRuleSystem<PermaBrigComponent>
         if (!_ticker.IsGameRuleActive<PermaBrigComponent>())
             return;
 
-        if (_permaBrigManager.GetBrigTime(ev.Player.UserId) == 0)
+        if (_permaBrigManager.GetBrigRounds(ev.Player.UserId) == 0)
             return;
 
         PermaIndividuals.Add(ev.Player);
 
         SpawnPrisonerPlayer(ev.Player, _permaBrigManager.GetBrigInpatient(ev.Player.UserId));
+        _permaBrigManager.RemoveBrigRounds(ev.Player.UserId, 1);
 
         ev.Handled = true;
 
@@ -208,22 +214,22 @@ public sealed class PermaBrigSystem : GameRuleSystem<PermaBrigComponent>
             _cuffableSystem.TryAddNewCuffs(mob, mob, cuffs, comp);
         }
 
-        var brigTime = _permaBrigManager.GetBrigTime(player.UserId);
+        var brigRounds = _permaBrigManager.GetBrigRounds(player.UserId);
         if (_inventory.TryGetSlotEntity(mob, "id", out var idUid))
         {
             var cardId = idUid.Value;
             if (TryComp<GenpopIdCardComponent>(cardId, out var card))
             {
                 card.Crime = Loc.GetString("perma-prisoner-crime");
-                card.SentenceDuration = TimeSpan.FromMinutes(brigTime);
+                card.SentenceDuration = TimeSpan.Zero;
                 if (TryComp<ExpireIdCardComponent>(cardId, out var expire))
                 {
                     expire.ExpireChannel = "Security";
                     expire.ExpireMessage = "perma-prisoner-release";
+                    _idCard.SetPermanent(cardId, true);
                 }
                 Dirty(cardId,card);
             }
-            _idCard.SetExpireTime(cardId, TimeSpan.FromMinutes(brigTime) + Timing.CurTime);
         }
 
         _mind.TransferTo(newMind, mob);
@@ -232,7 +238,7 @@ public sealed class PermaBrigSystem : GameRuleSystem<PermaBrigComponent>
         _roles.MindAddJobRole(newMind, silent: false, jobPrototype: jobId);
 
         var briefing = Loc.GetString("perma-prisoner-briefing",
-            ("minutes", brigTime));
+            ("rounds", brigRounds));
 
         _audio.PlayGlobal(_lockUpSound, player);
         var wrappedMessage = Loc.GetString("chat-manager-server-wrap-message", ("message", briefing));

@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Sprinkle <40203084+lnn0q@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2022 Flipp Syder <76629141+vulppine@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2022 wrexbe <81056464+wrexbe@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2023 0x6273 <0x40@keemail.me>
@@ -137,10 +138,10 @@ public sealed partial class StationRecordsSystem : SharedStationRecordsSystem
             _criminalRecords.TryAddHistory(stationRecordKey, "Is not banned from any roles.");
         }
 
-        var brigTime = _permaBrigManager.GetBrigTime(session.UserId);
-        if (brigTime > 0)
+        var brigRounds = _permaBrigManager.GetBrigRounds(session.UserId);
+        if (brigRounds > 0)
         {
-            var reason = "Sentenced to perma for " + _permaBrigManager.GetTimeLabel(brigTime);
+            var reason = "Sentenced to perma for " + _permaBrigManager.GetRoundsLabel(brigRounds);
             _criminalRecords.TryChangeStatus(stationRecordKey,
                 SecurityStatus.Perma,
                 reason);

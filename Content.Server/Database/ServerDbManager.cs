@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Sprinkle <40203084+lnn0q@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2021 Acruid <shatter66@gmail.com>
 // SPDX-FileCopyrightText: 2021 Javier Guardia Fernández <DrSmugleaf@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2021 Leo <lzimann@users.noreply.github.com>
@@ -378,7 +379,7 @@ namespace Content.Server.Database
 
         #region Admin Notes
 
-        Task<int> AddAdminNote(int? roundId, Guid player, TimeSpan playtimeAtNote, string message, NoteSeverity severity, bool secret, Guid createdBy, DateTimeOffset createdAt, DateTimeOffset? expiryTime);
+        Task<int> AddAdminNote(int? roundId, Guid player, TimeSpan playtimeAtNote, string message, NoteSeverity severity, bool secret, Guid? createdBy, DateTimeOffset createdAt, DateTimeOffset? expiryTime);
         Task<int> AddAdminWatchlist(int? roundId, Guid player, TimeSpan playtimeAtNote, string message, Guid createdBy, DateTimeOffset createdAt, DateTimeOffset? expiryTime);
         Task<int> AddAdminMessage(int? roundId, Guid player, TimeSpan playtimeAtNote, string message, Guid createdBy, DateTimeOffset createdAt, DateTimeOffset? expiryTime);
         Task<AdminNoteRecord?> GetAdminNote(int id);
@@ -821,20 +822,17 @@ namespace Content.Server.Database
             return RunDbCommand(() => _db.SetLastRolledAntag(userId, to));
         }
 
-        [Obsolete]
         public Task<int> GetPermaRoundsLeft(NetUserId userId) // Ratbite
         {
             DbReadOpsMetric.Inc();
             return RunDbCommand(() => _db.GetPermaRoundsLeft(userId));
         }
-        [Obsolete]
         public Task SetPermaRoundsLeft(NetUserId userId, int permaSentence) // Ratbite
         {
             DbReadOpsMetric.Inc();
             return RunDbCommand(() => _db.SetPermaRoundsLeft(userId, permaSentence));
         }
 
-        [Obsolete]
         public Task<int> ModifyPermaRoundsLeft(NetUserId userId, int permaSentence) // Ratbite
         {
             DbReadOpsMetric.Inc();
@@ -1084,7 +1082,7 @@ namespace Content.Server.Database
             return RunDbCommand(() => _db.SetLastReadRules(player, time));
         }
 
-        public Task<int> AddAdminNote(int? roundId, Guid player, TimeSpan playtimeAtNote, string message, NoteSeverity severity, bool secret, Guid createdBy, DateTimeOffset createdAt, DateTimeOffset? expiryTime)
+        public Task<int> AddAdminNote(int? roundId, Guid player, TimeSpan playtimeAtNote, string message, NoteSeverity severity, bool secret, Guid? createdBy, DateTimeOffset createdAt, DateTimeOffset? expiryTime)
         {
             DbWriteOpsMetric.Inc();
             var note = new AdminNote

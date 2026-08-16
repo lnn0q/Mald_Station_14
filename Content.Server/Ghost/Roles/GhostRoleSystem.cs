@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Sprinkle <40203084+lnn0q@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2021 20kdc <asdd2808@gmail.com>
 // SPDX-FileCopyrightText: 2021 Acruid <shatter66@gmail.com>
 // SPDX-FileCopyrightText: 2021 Vera Aguilera Puerto <6766154+Zumorica@users.noreply.github.com>
@@ -512,7 +513,7 @@ public sealed class GhostRoleSystem : EntitySystem
 
         if (!roleEnt.Comp.AllowPerma)
         {
-            if (_permaManager.GetBrigTime(player.UserId) > 0)
+            if (_permaManager.GetBrigRounds(player.UserId) > 0)
             {
                 _popupSystem.PopupCursor(Loc.GetString("perma-deny-ghost-role"), player);
                 return;

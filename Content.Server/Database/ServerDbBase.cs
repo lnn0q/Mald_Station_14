@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Sprinkle <40203084+lnn0q@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2020 20kdc <asdd2808@gmail.com>
 // SPDX-FileCopyrightText: 2021 Leo <lzimann@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2021 Metal Gear Sloth <metalgearsloth@gmail.com>
@@ -2156,7 +2157,6 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
         /*
          * PERMA TIME
          */
-        [Obsolete]
         public async Task<int> GetPermaRoundsLeft(NetUserId userId) // Ratbite
         {
             await using var db = await GetDb();
@@ -2167,7 +2167,6 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
                 .SingleOrDefaultAsync();
         }
 
-        [Obsolete]
         public async Task SetPermaRoundsLeft(NetUserId userId, int brigSentence) // Ratbite
         {
             await using var db = await GetDb();
@@ -2180,7 +2179,6 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
             await db.DbContext.SaveChangesAsync();
         }
 
-        [Obsolete]
         public async Task<int> ModifyPermaRoundsLeft(NetUserId userId, int brigSentence) // Goobstation
         {
             await using var db = await GetDb();
