@@ -21,6 +21,7 @@ public sealed class PermaReportsCommand : IConsoleCommand
     {
         var reports = _systems.GetEntitySystem<AutomaticPermaEligibilitySystem>().Reports;
         var filter = args.Length > 0 ? args[0] : null;
+        var count = 0;
 
         foreach (var report in reports)
         {
@@ -29,9 +30,20 @@ public sealed class PermaReportsCommand : IConsoleCommand
                 !report.Killer.UserId.UserId.ToString().Contains(filter, StringComparison.OrdinalIgnoreCase))
                 continue;
 
+            count++;
             shell.WriteLine(
                 $"{report.Id}: {report.Status} | {report.Killer.Name} -> {report.Victim.Name} | " +
                 $"round={report.RoundId} witness={report.WitnessName} resolution={report.Resolution ?? "none"}");
         }
+
+        if (count == 0)
+        {
+            shell.WriteLine(filter == null
+                ? "No automatic perma eligibility reports for this round."
+                : $"No automatic perma eligibility reports matched '{filter}'.");
+            return;
+        }
+
+        shell.WriteLine($"Listed {count} automatic perma eligibility report{(count == 1 ? string.Empty : "s")}.");
     }
 }

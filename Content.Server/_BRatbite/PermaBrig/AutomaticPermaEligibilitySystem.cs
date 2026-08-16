@@ -20,12 +20,13 @@ using Content.Shared.Mind;
 using Content.Shared.Mind.Components;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
-using Content.Shared.Physics;
-using Content.Shared.Power.EntitySystems;
 using Content.Shared.Roles;
 using Content.Shared.Roles.Jobs;
-using Content.Shared.StationAi;
+using Content.Shared.Silicons.StationAi;
+using Robust.Shared.Map;
+using Robust.Shared.Map.Components;
 using Robust.Shared.Network;
+using Robust.Shared.Physics;
 using Robust.Shared.Timing;
 
 namespace Content.Server._BRatbite.PermaBrig;
@@ -47,14 +48,14 @@ public sealed class AutomaticPermaEligibilitySystem : EntitySystem
     [Dependency] private readonly GameTicker _ticker = default!;
     [Dependency] private readonly PermaBrigManager _permaBrigManager = default!;
     [Dependency] private readonly SharedIdCardSystem _idCard = default!;
-    [Dependency] private readonly SharedInteractionSystem _interaction = default!;
     [Dependency] private readonly SharedJobSystem _jobs = default!;
+    [Dependency] private readonly SharedMapSystem _map = default!;
     [Dependency] private readonly SharedMindSystem _mind = default!;
-    [Dependency] private readonly SharedPowerReceiverSystem _power = default!;
     [Dependency] private readonly SharedRoleSystem _roles = default!;
-    [Dependency] private readonly SharedTransformSystem _transform = default!;
+    [Dependency] private readonly StationAiVisionSystem _stationAiVision = default!;
 
     private readonly HashSet<(NetUserId Attacker, NetUserId Victim)> _harmLedger = new();
+    private readonly Dictionary<EntityUid, DeathAttribution> _deathAttribution = new();
     private readonly Dictionary<Guid, PermaEligibilityReport> _reports = new();
     private readonly Dictionary<NetUserId, HashSet<Guid>> _reportsByKiller = new();
 
@@ -81,6 +82,9 @@ public sealed class AutomaticPermaEligibilitySystem : EntitySystem
             return;
 
         _harmLedger.Add((attacker.UserId, victim.UserId));
+
+        if (TryComp<MobStateComponent>(uid, out var mobState) && mobState.CurrentState == MobState.Critical)
+            _deathAttribution[uid] = new DeathAttribution(args.Origin.Value, attacker);
     }
 
     private void OnMobStateChanged(MobStateChangedEvent args)
@@ -88,11 +92,18 @@ public sealed class AutomaticPermaEligibilitySystem : EntitySystem
         if (args.NewMobState == MobState.Dead)
         {
             TryCreateReport(args.Target, args.Origin);
+            _deathAttribution.Remove(args.Target);
             return;
         }
 
+        if (args.NewMobState == MobState.Critical && TryGetDeathAttribution(args.Origin, out var attribution))
+            _deathAttribution[args.Target] = attribution;
+
         if (args.OldMobState == MobState.Dead)
+        {
+            _deathAttribution.Remove(args.Target);
             ClearReportsForVictim(args.Target, "victim revived");
+        }
     }
 
     private void OnMindAdded(EntityUid uid, MindContainerComponent component, MindAddedMessage args)
@@ -120,27 +131,35 @@ public sealed class AutomaticPermaEligibilitySystem : EntitySystem
     private void OnRoundRestartCleanup(RoundRestartCleanupEvent ev)
     {
         _harmLedger.Clear();
+        _deathAttribution.Clear();
         _reports.Clear();
         _reportsByKiller.Clear();
     }
 
     private void TryCreateReport(EntityUid victimEnt, EntityUid? origin)
     {
-        if (origin == null ||
-            !TryGetPlayerSnapshot(origin.Value, out var killer) ||
-            !TryGetPlayerSnapshot(victimEnt, out var victim) ||
+        if (!TryGetDeathAttribution(origin, out var attribution) &&
+            !_deathAttribution.TryGetValue(victimEnt, out attribution))
+            return;
+
+        var killer = attribution.Killer;
+        if (!TryGetPlayerSnapshot(victimEnt, out var victim) ||
             killer.UserId == victim.UserId)
             return;
 
-        if (IsReportExempt(killer, victim, origin.Value, out var reason))
+        if (IsReportExempt(killer, victim, attribution.KillerEntity, out var reason))
         {
             _adminLogger.Add(LogType.Perma, LogImpact.Low,
                 $"Automatic perma report skipped for {killer.Name} killing {victim.Name}: {reason}.");
             return;
         }
 
-        if (!TryFindWitness(origin.Value, victimEnt, out var witness))
+        if (!TryFindWitness(attribution.KillerEntity, victimEnt, out var witness))
+        {
+            _adminLogger.Add(LogType.Perma, LogImpact.Low,
+                $"Automatic perma report skipped for {killer.Name} killing {victim.Name}: kill was not in station AI camera view.");
             return;
+        }
 
         foreach (var report in _reports.Values)
         {
@@ -173,6 +192,16 @@ public sealed class AutomaticPermaEligibilitySystem : EntitySystem
 
         _adminLogger.Add(LogType.Perma, LogImpact.High,
             $"Automatic perma report created for {killer.Name} killing {victim.Name}; witness: {witness}.");
+    }
+
+    private bool TryGetDeathAttribution(EntityUid? origin, out DeathAttribution attribution)
+    {
+        attribution = default;
+        if (origin == null || !TryGetPlayerSnapshot(origin.Value, out var killer))
+            return false;
+
+        attribution = new DeathAttribution(origin.Value, killer);
+        return true;
     }
 
     private bool IsReportExempt(PlayerSnapshot killer, PlayerSnapshot victim, EntityUid killerEnt, out string reason)
@@ -219,16 +248,9 @@ public sealed class AutomaticPermaEligibilitySystem : EntitySystem
 
     private bool TryFindWitness(EntityUid killer, EntityUid victim, out string witness)
     {
-        var query = EntityQueryEnumerator<StationAiVisionComponent, TransformComponent>();
-        while (query.MoveNext(out var uid, out var vision, out var xform))
+        if (IsInStationAiView(killer) || IsInStationAiView(victim))
         {
-            if (!IsVisionProviderActive(uid, vision, xform))
-                continue;
-
-            if (!CanSee(uid, vision, killer) || !CanSee(uid, vision, victim))
-                continue;
-
-            witness = Name(uid);
+            witness = "station AI camera network";
             return true;
         }
 
@@ -236,37 +258,23 @@ public sealed class AutomaticPermaEligibilitySystem : EntitySystem
         return false;
     }
 
-    private bool IsVisionProviderActive(EntityUid uid, StationAiVisionComponent vision, TransformComponent xform)
+    private bool IsInStationAiView(EntityUid target)
     {
-        if (!vision.Enabled)
+        if (Deleted(target))
             return false;
 
-        if (vision.NeedsAnchoring && !xform.Anchored)
+        var xform = Transform(target);
+        if (xform.GridUid is not { } gridUid ||
+            !TryComp<BroadphaseComponent>(gridUid, out var broadphase) ||
+            !TryComp<MapGridComponent>(gridUid, out var grid))
             return false;
 
-        if (vision.NeedsPower && !_power.IsPowered(uid))
-            return false;
+        var targetTile = _map.LocalToTile(gridUid, grid, xform.Coordinates);
 
-        return true;
-    }
-
-    private bool CanSee(EntityUid source, StationAiVisionComponent vision, EntityUid target)
-    {
-        if (Deleted(source) || Deleted(target))
-            return false;
-
-        var sourceCoords = _transform.GetMapCoordinates(source);
-        var targetCoords = _transform.GetMapCoordinates(target);
-        if (sourceCoords.MapId != targetCoords.MapId)
-            return false;
-
-        if (!vision.Occluded)
-            return (sourceCoords.Position - targetCoords.Position).LengthSquared() <= vision.Range * vision.Range;
-
-        return _interaction.InRangeUnobstructed(source,
-            targetCoords,
-            vision.Range,
-            CollisionGroup.Opaque);
+        lock (_stationAiVision)
+        {
+            return _stationAiVision.IsAccessible((gridUid, broadphase, grid), targetTile);
+        }
     }
 
     private bool IsConcealingIdentity(EntityUid uid)
@@ -418,6 +426,8 @@ public sealed record PermaEligibilityReport(
     string WitnessName,
     PermaEligibilityReportStatus Status,
     string? Resolution);
+
+public readonly record struct DeathAttribution(EntityUid KillerEntity, PlayerSnapshot Killer);
 
 public sealed record PlayerSnapshot(
     NetUserId UserId,
